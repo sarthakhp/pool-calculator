@@ -5,14 +5,14 @@ import '../coordinates/screen_coordinate.dart';
 class CalculationEngine {
   const CalculationEngine._();
 
-  static (String angleText, String fractionText, String sarthakFractionText, double fraction, double sarthakFraction, ScreenCoordinate? ghostBallCenter) computeAngleAndFractionTexts({
+  static (double? angleDegrees, double fraction, double sarthakFraction, ScreenCoordinate? ghostBallCenter) compute({
     required ScreenCoordinate? cue,
     required ScreenCoordinate? object,
     required ScreenCoordinate? pocket,
     required double ballRadiusPixels,
   }) {
     if (cue == null || object == null || pocket == null) {
-      return ('Missing cue, object, or pocket selection', '', '', 0.0, 0.0, null);
+      return (null, 0.0, 0.0, null);
     }
 
     final result = AngleCalculator.calculate(
@@ -23,14 +23,10 @@ class CalculationEngine {
     );
 
     final fraction = result.hitFraction.clamp(0.0, 1.0);
-    final fractionPercent = fraction * 100;
-    final sarthakFraction = result.sarthakFraction.clamp(0.0, 1.0);
-    final sarthakFractionPercent = sarthakFraction * 100;
+    final sarthakFraction = result.sarthakFraction.clamp(-1.0, 1.0);
 
     return (
-      '${result.angleDegrees.toStringAsFixed(2)}°',
-      '${fractionPercent.toStringAsFixed(2)}%',
-      '${sarthakFractionPercent.toStringAsFixed(2)}%',
+      result.angleDegrees,
       fraction,
       sarthakFraction,
       result.ghostBallCenter,
