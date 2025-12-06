@@ -71,8 +71,8 @@ class DeckResultItem extends DeckItem {
     final theme = Theme.of(context);
     final screenSize = MediaQuery.sizeOf(context);
     final shortestSide = screenSize.shortestSide;
-    final labelFontSize = shortestSide * 0.018;
-    final valueFontSize = shortestSide * 0.03;
+    final labelFontSize = shortestSide * 0.05;
+    final valueFontSize = shortestSide * 0.05;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
@@ -92,7 +92,7 @@ class DeckResultItem extends DeckItem {
           ),
           Text(
             'Fraction:',
-            style: theme.textTheme.titleSmall?.copyWith(fontSize: labelFontSize),
+            style: theme.textTheme.labelLarge?.copyWith(fontSize: labelFontSize),
           ),
           Text(
             fractionText,
@@ -111,6 +111,69 @@ class DeckResultItem extends DeckItem {
             style: theme.textTheme.titleMedium?.copyWith(fontSize: valueFontSize),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class DeckOverlapItem extends DeckItem {
+  final double fraction;
+
+  const DeckOverlapItem({
+    super.key,
+    required this.fraction,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final clampedFraction = fraction.clamp(0.0, 1.0);
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final availableWidth = constraints.maxWidth;
+          final availableHeight = constraints.maxHeight;
+          final ballDiameter = (availableWidth * 0.4).clamp(0.0, availableHeight * 0.8);
+          final overlap = ballDiameter * clampedFraction;
+          final totalWidth = (ballDiameter * 2) - overlap;
+
+          return Center(
+          child: SizedBox(
+            width: totalWidth,
+            height: availableHeight,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Positioned(
+                  left: 0,
+                  child: Container(
+                    width: ballDiameter,
+                    height: ballDiameter,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.yellow,
+                      border: Border.all(color: Colors.black, width: 2),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  left: ballDiameter - overlap,
+                  child: Container(
+                    width: ballDiameter,
+                    height: ballDiameter,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withValues(alpha: 0.7),
+                      border: Border.all(color: Colors.black, width: 2),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+        },
       ),
     );
   }

@@ -114,10 +114,10 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
     return PocketPositions.getTableCoordinate(_selectedPositionName);
   }
 
-  (String angleText, String fractionText, String sarthakFractionText, ScreenCoordinate? ghostBallCenter) _computeAngleAndFractionTexts() {
+  (String angleText, String fractionText, String sarthakFractionText, double fraction, double sarthakFraction, ScreenCoordinate? ghostBallCenter) _computeAngleAndFractionTexts() {
     final converter = _converter;
     if (converter == null) {
-      return ('', '', '', null);
+      return ('', '', '', 0.0, 0.0, null);
     }
 
     final cue = _tableState.getBallCenter('cue');
@@ -138,91 +138,99 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('Pool Angle Calculator'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            tooltip: 'Reset',
+            onPressed: _resetBallPositions,
+          ),
+        ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-              : Row(
+          : LayoutBuilder(
+              builder: (context, constraints) {
+                final dimensions = _tableState.dimensions;
+                final aspectRatio = dimensions.aspectRatio;
+                final borderNormalized = dimensions.borderThicknessNormalized;
+
+                const sideDeckWidth = 500.0;
+                final maxWidth = constraints.maxWidth - sideDeckWidth;
+                final maxHeight = constraints.maxHeight;
+
+                final widthDenominator = 1 + (2 * borderNormalized);
+                final heightDenominator = (1 / aspectRatio) + (2 * borderNormalized);
+
+                final rawTableWidthByWidth = maxWidth / widthDenominator;
+                final rawTableWidthByHeight = maxHeight / heightDenominator;
+                final rawTableWidth = rawTableWidthByWidth < rawTableWidthByHeight
+                    ? rawTableWidthByWidth
+                    : rawTableWidthByHeight;
+
+                final buttonSize = rawTableWidth / 40;
+                final buttonMargin = buttonSize / 4;
+                final outerMargin = buttonSize + buttonMargin;
+
+                if (constraints.maxWidth <= outerMargin * 2 ||
+                    constraints.maxHeight <= outerMargin * 2) {
+                  return const SizedBox.shrink();
+                }
+
+                final availableWidthForTable = maxWidth - (outerMargin * 2);
+                final availableHeightForTable = maxHeight - (outerMargin * 2);
+
+                final tableWidthByWidth =
+                    availableWidthForTable / (widthDenominator <= 0 ? 1 : widthDenominator);
+                final tableWidthByHeight =
+                    availableHeightForTable / (heightDenominator <= 0 ? (1 / aspectRatio) : heightDenominator);
+
+                final tableWidthPixels = tableWidthByWidth < tableWidthByHeight
+                    ? tableWidthByWidth
+                    : tableWidthByHeight;
+                final tableHeightPixels = tableWidthPixels / aspectRatio;
+
+                final borderThicknessPixels =
+                    dimensions.borderThicknessNormalized * tableWidthPixels;
+
+                final groupWidth =
+                    tableWidthPixels + (2 * (borderThicknessPixels + outerMargin));
+                final groupHeight =
+                    tableHeightPixels + (2 * (borderThicknessPixels + outerMargin));
+
+                final groupLeft = (maxWidth - groupWidth) / 2;
+                final groupTop = (maxHeight - groupHeight) / 2;
+
+                _tableWidthPixels = tableWidthPixels;
+                _tableHeightPixels = tableHeightPixels;
+                _tableLeftPixels = groupLeft + outerMargin + borderThicknessPixels;
+                _tableTopPixels = groupTop + outerMargin + borderThicknessPixels;
+
+                _converter = CoordinateConverter(
+                  tableDimensions: dimensions,
+                  screenLayout: ScreenTableLayout(
+                    tableWidthPixels: _tableWidthPixels,
+                    tableHeightPixels: _tableHeightPixels,
+                    tableLeftPixels: _tableLeftPixels,
+                    tableTopPixels: _tableTopPixels,
+                  ),
+                );
+
+                final dragHandler = BallDragHandler(
+                  tableState: _tableState,
+                  converter: _converter!,
+                );
+
+                final (angleText, fractionText, sarthakFractionText, _, sarthakFraction, ghostBallCenter) = _computeAngleAndFractionTexts();
+                if (ghostBallCenter != null) {
+                  _tableState.updateGhostBall(_converter!.screenToTable(ghostBallCenter));
+                } else {
+                  _tableState.updateGhostBall(null);
+                }
+
+                return Row(
                   children: [
-                Expanded(
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final dimensions = _tableState.dimensions;
-                      final aspectRatio = dimensions.aspectRatio;
-                      final borderNormalized = dimensions.borderThicknessNormalized;
-
-                      final maxWidth = constraints.maxWidth;
-                      final maxHeight = constraints.maxHeight;
-
-                      final widthDenominator = 1 + (2 * borderNormalized);
-                      final heightDenominator = (1 / aspectRatio) + (2 * borderNormalized);
-
-                      final rawTableWidthByWidth = maxWidth / widthDenominator;
-                      final rawTableWidthByHeight = maxHeight / heightDenominator;
-                      final rawTableWidth = rawTableWidthByWidth < rawTableWidthByHeight
-                          ? rawTableWidthByWidth
-                          : rawTableWidthByHeight;
-
-                      final buttonSize = rawTableWidth / 40;
-                      final buttonMargin = buttonSize / 4;
-                      final outerMargin = buttonSize + buttonMargin;
-
-                      if (constraints.maxWidth <= outerMargin * 2 ||
-                          constraints.maxHeight <= outerMargin * 2) {
-                        return const SizedBox.shrink();
-                      }
-
-                      final availableWidthForTable = maxWidth - (outerMargin * 2);
-                      final availableHeightForTable = maxHeight - (outerMargin * 2);
-
-                      final tableWidthByWidth =
-                          availableWidthForTable / (widthDenominator <= 0 ? 1 : widthDenominator);
-                      final tableWidthByHeight =
-                          availableHeightForTable / (heightDenominator <= 0 ? (1 / aspectRatio) : heightDenominator);
-
-                      final tableWidthPixels = tableWidthByWidth < tableWidthByHeight
-                          ? tableWidthByWidth
-                          : tableWidthByHeight;
-                      final tableHeightPixels = tableWidthPixels / aspectRatio;
-
-                      final borderThicknessPixels =
-                          dimensions.borderThicknessNormalized * tableWidthPixels;
-
-                      final groupWidth =
-                          tableWidthPixels + (2 * (borderThicknessPixels + outerMargin));
-                      final groupHeight =
-                          tableHeightPixels + (2 * (borderThicknessPixels + outerMargin));
-
-                      final groupLeft = (maxWidth - groupWidth) / 2;
-                      final groupTop = (maxHeight - groupHeight) / 2;
-
-                      _tableWidthPixels = tableWidthPixels;
-                      _tableHeightPixels = tableHeightPixels;
-                      _tableLeftPixels = groupLeft + outerMargin + borderThicknessPixels;
-                      _tableTopPixels = groupTop + outerMargin + borderThicknessPixels;
-
-                      _converter = CoordinateConverter(
-                        tableDimensions: dimensions,
-                        screenLayout: ScreenTableLayout(
-                          tableWidthPixels: _tableWidthPixels,
-                          tableHeightPixels: _tableHeightPixels,
-                          tableLeftPixels: _tableLeftPixels,
-                          tableTopPixels: _tableTopPixels,
-                        ),
-                      );
-
-                      final dragHandler = BallDragHandler(
-                        tableState: _tableState,
-                        converter: _converter!,
-                      );
-
-                      final (_, _, _, ghostBallCenter) = _computeAngleAndFractionTexts();
-                      if (ghostBallCenter != null) {
-                        _tableState.updateGhostBall(_converter!.screenToTable(ghostBallCenter));
-                      } else {
-                        _tableState.updateGhostBall(null);
-                      }
-
-                      return Stack(
+                    Expanded(
+                      child: Stack(
                         clipBehavior: Clip.none,
                         children: [
                           Positioned(
@@ -289,16 +297,10 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                             },
                           ),
                         ],
-                      );
-                    },
-                  ),
-                ),
-                Builder(
-                  builder: (context) {
-                    final (angleText, fractionText, sarthakFractionText, _) = _computeAngleAndFractionTexts();
-
-                    return SideDeck(
-                      width: 500,
+                      ),
+                    ),
+                    SideDeck(
+                      width: sideDeckWidth,
                       items: [
                         SliderDeckItem(
                           label: 'Ball',
@@ -329,12 +331,14 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                           fractionText: fractionText,
                           sarthakFractionText: sarthakFractionText,
                         ),
-                        ResetDeckItem(onTap: _resetBallPositions),
+                        DeckOverlapItem(
+                          fraction: sarthakFraction,
+                        ),
                       ],
-                    );
-                  },
-                ),
-              ],
+                    ),
+                  ],
+                );
+              },
             ),
     );
   }

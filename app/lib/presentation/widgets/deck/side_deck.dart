@@ -34,12 +34,11 @@ class SideDeck extends StatelessWidget {
         child: Padding(
           padding: padding,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: items
-                .map((item) => Expanded(
-                      child: item,
-                    ))
-                .toList(),
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              for (int i = 0; i < items.length - 1; i++) items[i],
+              if (items.isNotEmpty) Expanded(child: items.last),
+            ],
           ),
         ),
       ),
