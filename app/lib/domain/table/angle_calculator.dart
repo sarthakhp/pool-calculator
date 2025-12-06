@@ -8,11 +8,13 @@ class AngleCalculationResult {
   final double angleRadians;
   final double angleDegrees;
   final double hitFraction;
+  final ScreenCoordinate ghostBallCenter;
 
   const AngleCalculationResult({
     required this.angleRadians,
     required this.angleDegrees,
     required this.hitFraction,
+    required this.ghostBallCenter,
   });
 }
 
@@ -23,7 +25,7 @@ class AngleCalculator {
     required ScreenCoordinate cueBall,
     required ScreenCoordinate objectBall,
     required ScreenCoordinate pocket,
-    required double ballRadius,
+    required double ballRadiusPixels,
   }) {
     // Debug: print coordinates before calculation
     // print('AngleCalculator.calculate -> cueBall: '
@@ -46,10 +48,11 @@ class AngleCalculator {
     final magOP = vOP.magnitude;
 
     if (magCO == 0 || magOP == 0) {
-      return const AngleCalculationResult(
+      return AngleCalculationResult(
         angleRadians: 0,
         angleDegrees: 0,
         hitFraction: 0,
+        ghostBallCenter: ScreenCoordinate(objectBall.x, objectBall.y),
       );
     }
 
@@ -72,10 +75,20 @@ class AngleCalculator {
 
     final hitFraction = 1 - sin(angleRadians);
 
+    // Ghost ball center: position along the line from pocket through object ball,
+    // at a distance of one ball diameter (2 * radius) from the object ball center
+    final ballDiameter = ballRadiusPixels * 2;
+    final vPOUnit = ScreenCoordinate(-vOPUnit.x, -vOPUnit.y);
+    final ghostBallCenter = ScreenCoordinate(
+      objectBall.x + vPOUnit.x * ballDiameter,
+      objectBall.y + vPOUnit.y * ballDiameter,
+    );
+
     return AngleCalculationResult(
       angleRadians: angleRadians,
       angleDegrees: angleDegrees,
       hitFraction: hitFraction,
+      ghostBallCenter: ghostBallCenter,
     );
   }
 }

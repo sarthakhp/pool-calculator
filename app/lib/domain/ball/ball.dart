@@ -56,6 +56,14 @@ class Ball {
     );
   }
 
+  factory Ball.ghost({required TableCoordinate position}) {
+    return Ball(
+      id: 'ghost',
+      type: BallType.ghost,
+      position: position,
+    );
+  }
+
   TableCoordinate get center => position;
 
   double radiusNormalized(TableDimensions dimensions) {

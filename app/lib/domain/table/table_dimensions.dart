@@ -14,7 +14,7 @@ class TableDimensions {
   static const TableDimensions standard = TableDimensions(
     lengthInches: 92.0,
     widthInches: 46.0,
-    ballDiameterInches: 2.25,
+    ballDiameterInches: 2.5,
     borderThicknessInches: 2.0,
   );
 

@@ -24,7 +24,16 @@ class BallWidget extends StatelessWidget {
         return _stripeBallColor(ball.number ?? 9);
       case BallType.eight:
         return Colors.black;
+      case BallType.ghost:
+        return Colors.white.withValues(alpha: 0.4);
     }
+  }
+
+  Color get _borderColor {
+    if (ball.type == BallType.ghost) {
+      return Colors.white.withValues(alpha: 0.8);
+    }
+    return Colors.black;
   }
 
   Color _solidBallColor(int number) {
@@ -54,7 +63,7 @@ class BallWidget extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: _ballColor,
-          border: Border.all(color: Colors.black, width: 2),
+          border: Border.all(color: _borderColor, width: 2),
         ),
       ),
     );

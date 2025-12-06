@@ -3,5 +3,6 @@ enum BallType {
   solid,
   stripe,
   eight,
+  ghost,
 }
 

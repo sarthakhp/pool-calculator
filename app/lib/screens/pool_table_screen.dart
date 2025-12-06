@@ -114,16 +114,21 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
     return PocketPositions.getTableCoordinate(_selectedPositionName);
   }
 
-  (String angleText, String fractionText) _computeAngleAndFractionTexts() {
+  (String angleText, String fractionText, ScreenCoordinate? ghostBallCenter) _computeAngleAndFractionTexts() {
+    final converter = _converter;
+    if (converter == null) {
+      return ('', '', null);
+    }
+
     final cue = _tableState.getBallCenter('cue');
     final object = _tableState.getBallCenter('object');
     final pocket = _getSelectedPocketCoordinate();
 
     return CalculationEngine.computeAngleAndFractionTexts(
-      cue: _converter?.tableToScreen(cue!),
-      object: _converter?.tableToScreen(object!),
-      pocket: _converter?.tableToScreen(pocket!),
-      ballRadius: _tableState.ballRadiusNormalized,
+      cue: cue != null ? converter.tableToScreen(cue) : null,
+      object: object != null ? converter.tableToScreen(object) : null,
+      pocket: pocket != null ? converter.tableToScreen(pocket) : null,
+      ballRadiusPixels: converter.ballRadiusPixels(),
     );
   }
 
@@ -204,6 +209,13 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                         converter: _converter!,
                       );
 
+                      final (_, _, ghostBallCenter) = _computeAngleAndFractionTexts();
+                      if (ghostBallCenter != null) {
+                        _tableState.updateGhostBall(_converter!.screenToTable(ghostBallCenter));
+                      } else {
+                        _tableState.updateGhostBall(null);
+                      }
+
                       return Stack(
                         clipBehavior: Clip.none,
                         children: [
@@ -242,7 +254,7 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                               pocket: _getSelectedPocketCoordinate(),
                             ),
                           ),
-                          ..._tableState.allBalls.map((ball) => DraggableBallWidget(
+                          ..._tableState.allBalls.where((ball) => ball.type != BallType.ghost).map((ball) => DraggableBallWidget(
                                 key: ValueKey(ball.id),
                                 ball: ball,
                                 dragHandler: dragHandler,
@@ -250,6 +262,15 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                                 onPositionChanged: () => setState(() {}),
                                 onDragEnd: () => _saveBallPosition(ball.id),
                               )),
+                          if (_tableState.ghostBall != null)
+                            Positioned(
+                              left: _converter!.ballTopLeftScreen(_tableState.ghostBall!.center).x,
+                              top: _converter!.ballTopLeftScreen(_tableState.ghostBall!.center).y,
+                              child: BallWidget(
+                                ball: _tableState.ghostBall!,
+                                diameter: _converter!.ballDiameterPixels(),
+                              ),
+                            ),
                           PocketSelectorButtons(
                             converter: _converter!,
                             storageHelper: _storageHelper,
@@ -267,7 +288,7 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                 ),
                 Builder(
                   builder: (context) {
-                    final (angleText, fractionText) = _computeAngleAndFractionTexts();
+                    final (angleText, fractionText, ghostBallCenter) = _computeAngleAndFractionTexts();
 
                     return BottomDeck(
                       height: 140,

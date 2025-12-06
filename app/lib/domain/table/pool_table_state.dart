@@ -90,4 +90,14 @@ class PoolTableState {
     _balls.clear();
     initializeDefaultBalls();
   }
+
+  void updateGhostBall(TableCoordinate? position) {
+    if (position == null) {
+      _balls.remove('ghost');
+    } else {
+      _balls['ghost'] = Ball.ghost(position: position);
+    }
+  }
+
+  Ball? get ghostBall => _balls['ghost'];
 }
