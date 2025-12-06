@@ -160,12 +160,33 @@ class DeckOverlapItem extends DeckItem {
           final objectBallLeft = clampedFraction > 0 ? ballDiameter - overlap : 0.0;
           final cueBallLeft = clampedFraction > 0 ? 0.0 : ballDiameter - overlap;
 
+          final ballRadius = ballDiameter / 2;
+          final pointSize = ballDiameter * 0.08;
+          final objectBallCenterX = objectBallLeft + ballRadius;
+          final cueBallCenterX = cueBallLeft + ballRadius;
+          final centerY = ballRadius;
+
+          Widget buildPoint(double x, double y, Color color, Color borderColor) {
+            return Positioned(
+              left: x - pointSize / 2,
+              top: y - pointSize / 2,
+              child: Container(
+                width: pointSize,
+                height: pointSize,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: color,
+                  border: Border.all(color: borderColor, width: 2),
+                ),
+              ),
+            );
+          }
+
           return Center(
             child: SizedBox(
               width: totalWidth,
               height: ballDiameter,
               child: Stack(
-                alignment: Alignment.center,
                 children: [
                   Positioned(
                     left: objectBallLeft,
@@ -191,6 +212,12 @@ class DeckOverlapItem extends DeckItem {
                       ),
                     ),
                   ),
+                  buildPoint(objectBallCenterX, centerY, Colors.blue, Colors.transparent),
+                  buildPoint(objectBallCenterX - ballRadius / 2, centerY, Colors.blue, Colors.transparent),
+                  buildPoint(objectBallCenterX + ballRadius / 2, centerY, Colors.blue, Colors.transparent),
+                  buildPoint(cueBallCenterX, centerY, Colors.red, Colors.red),
+                  // buildPoint(cueBallCenterX - ballRadius / 2, centerY, Colors.blue),
+                  // buildPoint(cueBallCenterX + ballRadius / 2, centerY, Colors.blue),
                 ],
               ),
             ),

@@ -4,6 +4,7 @@ import 'package:pool_calculator/backend/repositories/ball_position_repository.da
 import 'package:pool_calculator/backend/database/storage_helper.dart';
 import 'package:pool_calculator/domain/domain.dart';
 import 'package:pool_calculator/presentation/widgets/widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PoolTableScreen extends StatefulWidget {
   const PoolTableScreen({super.key});
@@ -136,13 +137,22 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Pool Angle Calculator'),
+        title: const Text(
+          '8 BALL POOL Calculator',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blueAccent),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
             tooltip: 'Reset',
             onPressed: _resetBallPositions,
+          ),
+          IconButton(
+            icon: const Icon(Icons.code),
+            tooltip: 'View on GitHub',
+            onPressed: () {
+              launchUrl(Uri.parse('https://github.com/sarthakhp/pool-calculator'));
+            },
           ),
         ],
       ),
