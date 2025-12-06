@@ -83,7 +83,8 @@ class AngleCalculator {
     final vOG = ghostBallCenter - objectBall;
 
     // left perpendicular to vCG
-    final sarthakFraction = 1 - (ScreenCoordinate(vCG.y, -vCG.x).normalized().dot(vOG).abs() / (ballRadiusPixels * 2));
+    var vPerpendicularDirection = ScreenCoordinate(vCG.y, -vCG.x).normalized().dot(vOG);
+    final sarthakFraction = vPerpendicularDirection.sign * (1 - (vPerpendicularDirection.abs() / (ballRadiusPixels * 2)));
 
     return AngleCalculationResult(
       angleRadians: angleRadians,

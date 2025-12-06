@@ -55,15 +55,15 @@ class DeckActionItem extends DeckItem {
 }
 
 class DeckResultItem extends DeckItem {
-  final String angleText;
-  final String fractionText;
-  final String sarthakFractionText;
+  final double? angleDegrees;
+  final double fraction;
+  final double sarthakFraction;
 
   const DeckResultItem({
     super.key,
-    required this.angleText,
-    required this.fractionText,
-    required this.sarthakFractionText,
+    required this.angleDegrees,
+    required this.fraction,
+    required this.sarthakFraction,
   });
 
   @override
@@ -73,6 +73,10 @@ class DeckResultItem extends DeckItem {
     final shortestSide = screenSize.shortestSide;
     final labelFontSize = shortestSide * 0.05;
     final valueFontSize = shortestSide * 0.05;
+
+    final angleText = angleDegrees != null ? '${angleDegrees!.toStringAsFixed(2)}°' : '-';
+    final fractionText = '${(fraction.abs() * 100).toStringAsFixed(2)}%';
+    final sarthakFractionText = '${(sarthakFraction.abs() * 100).toStringAsFixed(2)}%';
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
@@ -88,7 +92,10 @@ class DeckResultItem extends DeckItem {
             angleText,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.titleMedium?.copyWith(fontSize: valueFontSize),
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontSize: valueFontSize,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           Text(
             'Fraction:',
@@ -98,17 +105,23 @@ class DeckResultItem extends DeckItem {
             fractionText,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.titleMedium?.copyWith(fontSize: valueFontSize),
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontSize: valueFontSize,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           Text(
-            'Sarthak:',
+            'Sarthak Fraction:',
             style: theme.textTheme.titleSmall?.copyWith(fontSize: labelFontSize),
           ),
           Text(
             sarthakFractionText,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.titleMedium?.copyWith(fontSize: valueFontSize),
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontSize: valueFontSize,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ),
@@ -126,7 +139,8 @@ class DeckOverlapItem extends DeckItem {
 
   @override
   Widget build(BuildContext context) {
-    final clampedFraction = fraction.clamp(0.0, 1.0);
+    final clampedFraction = fraction.clamp(-1.0, 1.0);
+    final absFraction = clampedFraction.abs();
 
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -135,44 +149,47 @@ class DeckOverlapItem extends DeckItem {
           final availableWidth = constraints.maxWidth;
           final availableHeight = constraints.maxHeight;
           final ballDiameter = (availableWidth * 0.4).clamp(0.0, availableHeight * 0.8);
-          final overlap = ballDiameter * clampedFraction;
+          final overlap = ballDiameter * absFraction;
           final totalWidth = (ballDiameter * 2) - overlap;
 
+          final objectBallLeft = clampedFraction > 0 ? ballDiameter - overlap : 0.0;
+          final cueBallLeft = clampedFraction > 0 ? 0.0 : ballDiameter - overlap;
+
           return Center(
-          child: SizedBox(
-            width: totalWidth,
-            height: availableHeight,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Positioned(
-                  left: 0,
-                  child: Container(
-                    width: ballDiameter,
-                    height: ballDiameter,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.yellow,
-                      border: Border.all(color: Colors.black, width: 2),
+            child: SizedBox(
+              width: totalWidth,
+              height: availableHeight,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Positioned(
+                    left: objectBallLeft,
+                    child: Container(
+                      width: ballDiameter,
+                      height: ballDiameter,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.yellow,
+                        border: Border.all(color: Colors.black, width: 2),
+                      ),
                     ),
                   ),
-                ),
-                Positioned(
-                  left: ballDiameter - overlap,
-                  child: Container(
-                    width: ballDiameter,
-                    height: ballDiameter,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white.withValues(alpha: 0.7),
-                      border: Border.all(color: Colors.black, width: 2),
+                  Positioned(
+                    left: cueBallLeft,
+                    child: Container(
+                      width: ballDiameter,
+                      height: ballDiameter,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white.withValues(alpha: 0.7),
+                        border: Border.all(color: Colors.black, width: 2),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        );
+          );
         },
       ),
     );

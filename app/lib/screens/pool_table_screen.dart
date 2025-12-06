@@ -114,17 +114,17 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
     return PocketPositions.getTableCoordinate(_selectedPositionName);
   }
 
-  (String angleText, String fractionText, String sarthakFractionText, double fraction, double sarthakFraction, ScreenCoordinate? ghostBallCenter) _computeAngleAndFractionTexts() {
+  (double? angleDegrees, double fraction, double sarthakFraction, ScreenCoordinate? ghostBallCenter) _compute() {
     final converter = _converter;
     if (converter == null) {
-      return ('', '', '', 0.0, 0.0, null);
+      return (null, 0.0, 0.0, null);
     }
 
     final cue = _tableState.getBallCenter('cue');
     final object = _tableState.getBallCenter('object');
     final pocket = _getSelectedPocketCoordinate();
 
-    return CalculationEngine.computeAngleAndFractionTexts(
+    return CalculationEngine.compute(
       cue: cue != null ? converter.tableToScreen(cue) : null,
       object: object != null ? converter.tableToScreen(object) : null,
       pocket: pocket != null ? converter.tableToScreen(pocket) : null,
@@ -220,7 +220,7 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                   converter: _converter!,
                 );
 
-                final (angleText, fractionText, sarthakFractionText, _, sarthakFraction, ghostBallCenter) = _computeAngleAndFractionTexts();
+                final (angleDegrees, fraction, sarthakFraction, ghostBallCenter) = _compute();
                 if (ghostBallCenter != null) {
                   _tableState.updateGhostBall(_converter!.screenToTable(ghostBallCenter));
                 } else {
@@ -327,9 +327,9 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                           },
                         ),
                         DeckResultItem(
-                          angleText: angleText,
-                          fractionText: fractionText,
-                          sarthakFractionText: sarthakFractionText,
+                          angleDegrees: angleDegrees,
+                          fraction: fraction,
+                          sarthakFraction: sarthakFraction,
                         ),
                         DeckOverlapItem(
                           fraction: sarthakFraction,
