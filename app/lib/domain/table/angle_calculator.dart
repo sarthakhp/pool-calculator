@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:pool_calculator/domain/coordinates/table_coordinate.dart';
 
+import '../coordinates/screen_coordinate.dart';
+
 class AngleCalculationResult {
   final double angleRadians;
   final double angleDegrees;
@@ -18,18 +20,18 @@ class AngleCalculator {
   const AngleCalculator._();
 
   static AngleCalculationResult calculate({
-    required TableCoordinate cueBall,
-    required TableCoordinate objectBall,
-    required TableCoordinate pocket,
+    required ScreenCoordinate cueBall,
+    required ScreenCoordinate objectBall,
+    required ScreenCoordinate pocket,
     required double ballRadius,
   }) {
     // Debug: print coordinates before calculation
-    print('AngleCalculator.calculate -> cueBall: '
-        '(${cueBall.x.toStringAsFixed(4)}, ${cueBall.y.toStringAsFixed(4)})');
-    print('AngleCalculator.calculate -> objectBall: '
-        '(${objectBall.x.toStringAsFixed(4)}, ${objectBall.y.toStringAsFixed(4)})');
-    print('AngleCalculator.calculate -> pocket: '
-        '(${pocket.x.toStringAsFixed(4)}, ${pocket.y.toStringAsFixed(4)})');
+    // print('AngleCalculator.calculate -> cueBall: '
+    //     '(${cueBall.x.toStringAsFixed(4)}, ${cueBall.y.toStringAsFixed(4)})');
+    // print('AngleCalculator.calculate -> objectBall: '
+    //     '(${objectBall.x.toStringAsFixed(4)}, ${objectBall.y.toStringAsFixed(4)})');
+    // print('AngleCalculator.calculate -> pocket: '
+    //     '(${pocket.x.toStringAsFixed(4)}, ${pocket.y.toStringAsFixed(4)})');
 
     final vCO = TableCoordinate(
       objectBall.x - cueBall.x,
@@ -54,11 +56,11 @@ class AngleCalculator {
     final vCOUnit = TableCoordinate(vCO.x / magCO, vCO.y / magCO);
     final vOPUnit = TableCoordinate(vOP.x / magOP, vOP.y / magOP);
 
-    print('AngleCalculator.calculate -> vector vCO: '
-        '(${vCOUnit.x.toStringAsFixed(4)}, ${vCO.y.toStringAsFixed(4)})');
-
-    print('AngleCalculator.calculate -> vector vOP: '
-        '(${vOPUnit.x.toStringAsFixed(4)}, ${vOP.y.toStringAsFixed(4)})');
+    // print('AngleCalculator.calculate -> vector vCO: '
+    //     '(${vCOUnit.x.toStringAsFixed(4)}, ${vCO.y.toStringAsFixed(4)})');
+    //
+    // print('AngleCalculator.calculate -> vector vOP: '
+    //     '(${vOPUnit.x.toStringAsFixed(4)}, ${vOP.y.toStringAsFixed(4)})');
 
     final dot = (vCOUnit.x * vOPUnit.x) + (vCOUnit.y * vOPUnit.y);
     var cosTheta = dot;

@@ -19,6 +19,12 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
   bool _isLoading = true;
   String? _selectedPositionName;
 
+  double _tableWidthPixels = 0;
+  double _tableHeightPixels = 0;
+  double _tableLeftPixels = 0;
+  double _tableTopPixels = 0;
+  CoordinateConverter? _converter;
+
   @override
   void initState() {
     super.initState();
@@ -114,9 +120,9 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
     final pocket = _getSelectedPocketCoordinate();
 
     return CalculationEngine.computeAngleAndFractionTexts(
-      cue: cue,
-      object: object,
-      pocket: pocket,
+      cue: _converter?.tableToScreen(cue!),
+      object: _converter?.tableToScreen(object!),
+      pocket: _converter?.tableToScreen(pocket!),
       ballRadius: _tableState.ballRadiusNormalized,
     );
   }
@@ -178,48 +184,50 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                       final groupLeft = (maxWidth - groupWidth) / 2;
                       final groupTop = (maxHeight - groupHeight) / 2;
 
-                      final tableLeft = groupLeft + outerMargin + borderThicknessPixels;
-                      final tableTop = groupTop + outerMargin + borderThicknessPixels;
+                      _tableWidthPixels = tableWidthPixels;
+                      _tableHeightPixels = tableHeightPixels;
+                      _tableLeftPixels = groupLeft + outerMargin + borderThicknessPixels;
+                      _tableTopPixels = groupTop + outerMargin + borderThicknessPixels;
 
-                      final converter = CoordinateConverter(
+                      _converter = CoordinateConverter(
                         tableDimensions: dimensions,
                         screenLayout: ScreenTableLayout(
-                          tableWidthPixels: tableWidthPixels,
-                          tableHeightPixels: tableHeightPixels,
-                          tableLeftPixels: tableLeft,
-                          tableTopPixels: tableTop,
+                          tableWidthPixels: _tableWidthPixels,
+                          tableHeightPixels: _tableHeightPixels,
+                          tableLeftPixels: _tableLeftPixels,
+                          tableTopPixels: _tableTopPixels,
                         ),
                       );
 
                       final dragHandler = BallDragHandler(
                         tableState: _tableState,
-                        converter: converter,
+                        converter: _converter!,
                       );
 
                       return Stack(
                         clipBehavior: Clip.none,
                         children: [
                           Positioned(
-                            left: converter.tableLeftPixels - borderThicknessPixels,
-                            top: converter.tableTopPixels - borderThicknessPixels,
+                            left: _converter!.tableLeftPixels - borderThicknessPixels,
+                            top: _converter!.tableTopPixels - borderThicknessPixels,
                             child: TableBoundaryWidget(
-                              tableWidth: converter.tableWidthPixels,
-                              tableHeight: converter.tableHeightPixels,
+                              tableWidth: _converter!.tableWidthPixels,
+                              tableHeight: _converter!.tableHeightPixels,
                               borderThickness: borderThicknessPixels,
                             ),
                           ),
                           Positioned(
-                            left: converter.tableLeftPixels,
-                            top: converter.tableTopPixels,
+                            left: _converter!.tableLeftPixels,
+                            top: _converter!.tableTopPixels,
                             child: Stack(
                               children: [
                                 PoolTableWidget(
-                                  width: converter.tableWidthPixels,
-                                  height: converter.tableHeightPixels,
+                                  width: _converter!.tableWidthPixels,
+                                  height: _converter!.tableHeightPixels,
                                 ),
                                 TableGridOverlay(
-                                  width: converter.tableWidthPixels,
-                                  height: converter.tableHeightPixels,
+                                  width: _converter!.tableWidthPixels,
+                                  height: _converter!.tableHeightPixels,
                                   columns: 6,
                                   rows: 3,
                                 ),
@@ -228,7 +236,7 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                           ),
                           Positioned.fill(
                             child: ShotGuideOverlay(
-                              converter: converter,
+                              converter: _converter!,
                               cueBallCenter: _tableState.getBallCenter('cue'),
                               objectBallCenter: _tableState.getBallCenter('object'),
                               pocket: _getSelectedPocketCoordinate(),
@@ -238,12 +246,12 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                                 key: ValueKey(ball.id),
                                 ball: ball,
                                 dragHandler: dragHandler,
-                                converter: converter,
+                                converter: _converter!,
                                 onPositionChanged: () => setState(() {}),
                                 onDragEnd: () => _saveBallPosition(ball.id),
                               )),
                           PocketSelectorButtons(
-                            converter: converter,
+                            converter: _converter!,
                             storageHelper: _storageHelper,
                             selectedPositionName: _selectedPositionName,
                             onSelectionChanged: (name) {
