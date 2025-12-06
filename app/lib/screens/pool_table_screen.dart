@@ -19,6 +19,7 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
   late final PoolTableState _tableState;
   bool _isLoading = true;
   String? _selectedPositionName;
+  bool _isSideDeckExpanded = true;
 
   double _tableWidthPixels = 0;
   double _tableHeightPixels = 0;
@@ -164,7 +165,9 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                 final aspectRatio = dimensions.aspectRatio;
                 final borderNormalized = dimensions.borderThicknessNormalized;
 
-                const sideDeckWidth = 300.0;
+                const sideDeckExpandedWidth = 300.0;
+                const sideDeckCollapsedWidth = 40.0;
+                final sideDeckWidth = _isSideDeckExpanded ? sideDeckExpandedWidth : sideDeckCollapsedWidth;
                 final maxWidth = constraints.maxWidth - sideDeckWidth;
                 final maxHeight = constraints.maxHeight;
 
@@ -310,42 +313,81 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                         ],
                       ),
                     ),
-                    SideDeck(
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
                       width: sideDeckWidth,
-                      items: [
-                        DeckOverlapItem(
-                          fraction: sarthakFraction,
-                        ),
-                        DeckResultItem(
-                          angleDegrees: angleDegrees,
-                          fraction: fraction,
-                          sarthakFraction: sarthakFraction,
-                        ),
-                        SliderDeckItem(
-                          label: 'Ball',
-                          value: _tableState.dimensions.ballDiameterInches,
-                          min: 1.0,
-                          max: 5.0,
-                          onChanged: (value) {
-                            setState(() {
-                              _tableState.updateBallDiameter(value);
-                            });
-                            _storageHelper.setBallDiameterInches(value);
-                          },
-                        ),
-                        SliderDeckItem(
-                          label: 'Border',
-                          value: _tableState.dimensions.borderThicknessInches,
-                          min: 0.5,
-                          max: 6.0,
-                          onChanged: (value) {
-                            setState(() {
-                              _tableState.updateBorderThickness(value);
-                            });
-                            _storageHelper.setBorderThicknessInches(value);
-                          },
-                        ),
-                      ],
+                      child: _isSideDeckExpanded
+                          ? Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _isSideDeckExpanded = false;
+                                    });
+                                  },
+                                  child: Container(
+                                    width: sideDeckCollapsedWidth,
+                                    color: Theme.of(context).colorScheme.surface,
+                                    child: const Center(
+                                      child: Icon(Icons.chevron_right),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: SideDeck(
+                                    width: sideDeckExpandedWidth - sideDeckCollapsedWidth,
+                                    items: [
+                                      DeckOverlapItem(
+                                        fraction: sarthakFraction,
+                                      ),
+                                      DeckResultItem(
+                                        angleDegrees: angleDegrees,
+                                        fraction: fraction,
+                                        sarthakFraction: sarthakFraction,
+                                      ),
+                                      SliderDeckItem(
+                                        label: 'Ball',
+                                        value: _tableState.dimensions.ballDiameterInches,
+                                        min: 1.0,
+                                        max: 5.0,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _tableState.updateBallDiameter(value);
+                                          });
+                                          _storageHelper.setBallDiameterInches(value);
+                                        },
+                                      ),
+                                      SliderDeckItem(
+                                        label: 'Border',
+                                        value: _tableState.dimensions.borderThicknessInches,
+                                        min: 0.5,
+                                        max: 6.0,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _tableState.updateBorderThickness(value);
+                                          });
+                                          _storageHelper.setBorderThicknessInches(value);
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            )
+                          : GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _isSideDeckExpanded = true;
+                                });
+                              },
+                              child: Container(
+                                width: sideDeckCollapsedWidth,
+                                color: Theme.of(context).colorScheme.surface,
+                                child: const Center(
+                                  child: Icon(Icons.chevron_left),
+                                ),
+                              ),
+                            ),
                     ),
                   ],
                 );
