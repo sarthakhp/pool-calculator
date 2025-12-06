@@ -23,6 +23,10 @@ class DeckActionItem extends DeckItem {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final screenSize = MediaQuery.sizeOf(context);
+    final shortestSide = screenSize.shortestSide;
+    final fontSize = shortestSide * 0.02;
+    final iconSize = shortestSide * 0.035;
     final effectiveColor = enabled
         ? (iconColor ?? theme.colorScheme.onSurface)
         : theme.colorScheme.onSurface.withValues(alpha: 0.38);
@@ -31,20 +35,19 @@ class DeckActionItem extends DeckItem {
       onTap: enabled ? onTap : null,
       borderRadius: BorderRadius.circular(12),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, color: effectiveColor, size: 32),
-              const SizedBox(height: 4),
-              Text(
-                label,
-                style: theme.textTheme.titleMedium?.copyWith(color: effectiveColor),
+        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: effectiveColor, size: iconSize),
+            Text(
+              label,
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: effectiveColor,
+                fontSize: fontSize,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -66,49 +69,48 @@ class DeckResultItem extends DeckItem {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final screenSize = MediaQuery.sizeOf(context);
+    final shortestSide = screenSize.shortestSide;
+    final labelFontSize = shortestSide * 0.018;
+    final valueFontSize = shortestSide * 0.03;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        alignment: Alignment.centerLeft,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Angle:',
-              style: theme.textTheme.titleSmall,
-            ),
-            Text(
-              angleText,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.titleMedium,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Fraction:',
-              style: theme.textTheme.titleSmall,
-            ),
-            Text(
-              fractionText,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.titleMedium,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Sarthak:',
-              style: theme.textTheme.titleSmall,
-            ),
-            Text(
-              sarthakFractionText,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.titleMedium,
-            ),
-          ],
-        ),
+      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Angle:',
+            style: theme.textTheme.titleSmall?.copyWith(fontSize: labelFontSize),
+          ),
+          Text(
+            angleText,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: theme.textTheme.titleMedium?.copyWith(fontSize: valueFontSize),
+          ),
+          Text(
+            'Fraction:',
+            style: theme.textTheme.titleSmall?.copyWith(fontSize: labelFontSize),
+          ),
+          Text(
+            fractionText,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: theme.textTheme.titleMedium?.copyWith(fontSize: valueFontSize),
+          ),
+          Text(
+            'Sarthak:',
+            style: theme.textTheme.titleSmall?.copyWith(fontSize: labelFontSize),
+          ),
+          Text(
+            sarthakFractionText,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: theme.textTheme.titleMedium?.copyWith(fontSize: valueFontSize),
+          ),
+        ],
       ),
     );
   }

@@ -7,6 +7,7 @@ class PocketSelectorButtons extends StatelessWidget {
   final StorageHelper storageHelper;
   final String? selectedPositionName;
   final ValueChanged<String> onSelectionChanged;
+  final double buttonSize;
 
   const PocketSelectorButtons({
     super.key,
@@ -14,12 +15,12 @@ class PocketSelectorButtons extends StatelessWidget {
     required this.storageHelper,
     required this.selectedPositionName,
     required this.onSelectionChanged,
+    required this.buttonSize,
   });
 
   @override
   Widget build(BuildContext context) {
-    const buttonSize = 32.0;
-    const buttonMargin = 8.0;
+    final buttonMargin = buttonSize / 4;
 
     final borderThicknessPixels = converter.borderThicknessPixels();
 

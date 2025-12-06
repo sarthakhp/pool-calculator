@@ -22,23 +22,20 @@ class SliderDeckItem extends DeckItem {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final screenSize = MediaQuery.sizeOf(context);
+    final shortestSide = screenSize.shortestSide;
+    final fontSize = shortestSide * 0.02;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Flexible(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                '$label: ${value.toStringAsFixed(2)}$unit',
-                style: theme.textTheme.titleMedium,
-              ),
-            ),
+          Text(
+            '$label: ${value.toStringAsFixed(2)}$unit',
+            style: theme.textTheme.titleMedium?.copyWith(fontSize: fontSize),
           ),
           Flexible(
-            flex: 2,
             child: SliderTheme(
               data: SliderTheme.of(context).copyWith(
                 trackHeight: 4,

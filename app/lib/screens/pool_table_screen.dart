@@ -146,15 +146,6 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                 Expanded(
                   child: LayoutBuilder(
                     builder: (context, constraints) {
-                      const buttonSize = 32.0;
-                      const buttonMargin = 8.0;
-                      const outerMargin = buttonSize + buttonMargin;
-
-                      if (constraints.maxWidth <= outerMargin * 2 ||
-                          constraints.maxHeight <= outerMargin * 2) {
-                        return const SizedBox.shrink();
-                      }
-
                       final dimensions = _tableState.dimensions;
                       final aspectRatio = dimensions.aspectRatio;
                       final borderNormalized = dimensions.borderThicknessNormalized;
@@ -162,11 +153,26 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                       final maxWidth = constraints.maxWidth;
                       final maxHeight = constraints.maxHeight;
 
-                      final availableWidthForTable = maxWidth - (outerMargin * 2);
-                      final availableHeightForTable = maxHeight - (outerMargin * 2);
-
                       final widthDenominator = 1 + (2 * borderNormalized);
                       final heightDenominator = (1 / aspectRatio) + (2 * borderNormalized);
+
+                      final rawTableWidthByWidth = maxWidth / widthDenominator;
+                      final rawTableWidthByHeight = maxHeight / heightDenominator;
+                      final rawTableWidth = rawTableWidthByWidth < rawTableWidthByHeight
+                          ? rawTableWidthByWidth
+                          : rawTableWidthByHeight;
+
+                      final buttonSize = rawTableWidth / 40;
+                      final buttonMargin = buttonSize / 4;
+                      final outerMargin = buttonSize + buttonMargin;
+
+                      if (constraints.maxWidth <= outerMargin * 2 ||
+                          constraints.maxHeight <= outerMargin * 2) {
+                        return const SizedBox.shrink();
+                      }
+
+                      final availableWidthForTable = maxWidth - (outerMargin * 2);
+                      final availableHeightForTable = maxHeight - (outerMargin * 2);
 
                       final tableWidthByWidth =
                           availableWidthForTable / (widthDenominator <= 0 ? 1 : widthDenominator);
@@ -275,6 +281,7 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                             converter: _converter!,
                             storageHelper: _storageHelper,
                             selectedPositionName: _selectedPositionName,
+                            buttonSize: buttonSize,
                             onSelectionChanged: (name) {
                               setState(() {
                                 _selectedPositionName = name;
@@ -291,7 +298,7 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                     final (angleText, fractionText, sarthakFractionText, _) = _computeAngleAndFractionTexts();
 
                     return SideDeck(
-                      width: 200,
+                      width: 500,
                       items: [
                         SliderDeckItem(
                           label: 'Ball',

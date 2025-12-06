@@ -9,8 +9,8 @@ class SideDeck extends StatelessWidget {
   const SideDeck({
     super.key,
     required this.items,
-    this.width = 72,
-    this.padding = const EdgeInsets.symmetric(vertical: 16),
+    this.width = 200,
+    this.padding = const EdgeInsets.symmetric(vertical: 0),
   });
 
   @override
