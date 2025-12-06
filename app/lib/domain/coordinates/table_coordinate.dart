@@ -43,8 +43,6 @@ class TableCoordinate {
     return TableCoordinate(x / magnitude, y / magnitude);
   }
 
-  double get magnitude => sqrt(x * x + y * y);
-
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;

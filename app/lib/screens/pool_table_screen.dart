@@ -114,10 +114,10 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
     return PocketPositions.getTableCoordinate(_selectedPositionName);
   }
 
-  (String angleText, String fractionText, ScreenCoordinate? ghostBallCenter) _computeAngleAndFractionTexts() {
+  (String angleText, String fractionText, String sarthakFractionText, ScreenCoordinate? ghostBallCenter) _computeAngleAndFractionTexts() {
     final converter = _converter;
     if (converter == null) {
-      return ('', '', null);
+      return ('', '', '', null);
     }
 
     final cue = _tableState.getBallCenter('cue');
@@ -141,7 +141,7 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-              : Column(
+              : Row(
                   children: [
                 Expanded(
                   child: LayoutBuilder(
@@ -209,7 +209,7 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                         converter: _converter!,
                       );
 
-                      final (_, _, ghostBallCenter) = _computeAngleAndFractionTexts();
+                      final (_, _, _, ghostBallCenter) = _computeAngleAndFractionTexts();
                       if (ghostBallCenter != null) {
                         _tableState.updateGhostBall(_converter!.screenToTable(ghostBallCenter));
                       } else {
@@ -288,10 +288,10 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                 ),
                 Builder(
                   builder: (context) {
-                    final (angleText, fractionText, ghostBallCenter) = _computeAngleAndFractionTexts();
+                    final (angleText, fractionText, sarthakFractionText, _) = _computeAngleAndFractionTexts();
 
-                    return BottomDeck(
-                      height: 140,
+                    return SideDeck(
+                      width: 200,
                       items: [
                         SliderDeckItem(
                           label: 'Ball',
@@ -320,6 +320,7 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                         DeckResultItem(
                           angleText: angleText,
                           fractionText: fractionText,
+                          sarthakFractionText: sarthakFractionText,
                         ),
                         ResetDeckItem(onTap: _resetBallPositions),
                       ],

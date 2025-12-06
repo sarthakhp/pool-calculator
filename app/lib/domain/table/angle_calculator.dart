@@ -1,19 +1,19 @@
 import 'dart:math';
 
-import 'package:pool_calculator/domain/coordinates/table_coordinate.dart';
-
 import '../coordinates/screen_coordinate.dart';
 
 class AngleCalculationResult {
   final double angleRadians;
   final double angleDegrees;
   final double hitFraction;
+  final double sarthakFraction;
   final ScreenCoordinate ghostBallCenter;
 
   const AngleCalculationResult({
     required this.angleRadians,
     required this.angleDegrees,
     required this.hitFraction,
+    required this.sarthakFraction,
     required this.ghostBallCenter,
   });
 }
@@ -35,14 +35,8 @@ class AngleCalculator {
     // print('AngleCalculator.calculate -> pocket: '
     //     '(${pocket.x.toStringAsFixed(4)}, ${pocket.y.toStringAsFixed(4)})');
 
-    final vCO = TableCoordinate(
-      objectBall.x - cueBall.x,
-      objectBall.y - cueBall.y,
-    );
-    final vOP = TableCoordinate(
-      pocket.x - objectBall.x,
-      pocket.y - objectBall.y,
-    );
+    final vCO = objectBall - cueBall;
+    final vOP = pocket - objectBall;
 
     final magCO = vCO.magnitude;
     final magOP = vOP.magnitude;
@@ -52,12 +46,13 @@ class AngleCalculator {
         angleRadians: 0,
         angleDegrees: 0,
         hitFraction: 0,
+        sarthakFraction: 0,
         ghostBallCenter: ScreenCoordinate(objectBall.x, objectBall.y),
       );
     }
 
-    final vCOUnit = TableCoordinate(vCO.x / magCO, vCO.y / magCO);
-    final vOPUnit = TableCoordinate(vOP.x / magOP, vOP.y / magOP);
+    final vCOUnit = vCO.normalized();
+    final vOPUnit = vOP.normalized();
 
     // print('AngleCalculator.calculate -> vector vCO: '
     //     '(${vCOUnit.x.toStringAsFixed(4)}, ${vCO.y.toStringAsFixed(4)})');
@@ -65,7 +60,7 @@ class AngleCalculator {
     // print('AngleCalculator.calculate -> vector vOP: '
     //     '(${vOPUnit.x.toStringAsFixed(4)}, ${vOP.y.toStringAsFixed(4)})');
 
-    final dot = (vCOUnit.x * vOPUnit.x) + (vCOUnit.y * vOPUnit.y);
+    final dot = vCOUnit.dot(vOPUnit);
     var cosTheta = dot;
     if (cosTheta > 1) cosTheta = 1;
     if (cosTheta < -1) cosTheta = -1;
@@ -84,10 +79,17 @@ class AngleCalculator {
       objectBall.y + vPOUnit.y * ballDiameter,
     );
 
+    final vCG = ghostBallCenter - cueBall;
+    final vOG = ghostBallCenter - objectBall;
+
+    // left perpendicular to vCG
+    final sarthakFraction = 1 - (ScreenCoordinate(vCG.y, -vCG.x).normalized().dot(vOG).abs() / (ballRadiusPixels * 2));
+
     return AngleCalculationResult(
       angleRadians: angleRadians,
       angleDegrees: angleDegrees,
       hitFraction: hitFraction,
+      sarthakFraction: sarthakFraction,
       ghostBallCenter: ghostBallCenter,
     );
   }

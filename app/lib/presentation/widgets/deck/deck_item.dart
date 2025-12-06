@@ -32,16 +32,19 @@ class DeckActionItem extends DeckItem {
       borderRadius: BorderRadius.circular(12),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: effectiveColor, size: 24),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: theme.textTheme.labelSmall?.copyWith(color: effectiveColor),
-            ),
-          ],
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, color: effectiveColor, size: 32),
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: theme.textTheme.titleMedium?.copyWith(color: effectiveColor),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -51,11 +54,13 @@ class DeckActionItem extends DeckItem {
 class DeckResultItem extends DeckItem {
   final String angleText;
   final String fractionText;
+  final String sarthakFractionText;
 
   const DeckResultItem({
     super.key,
     required this.angleText,
     required this.fractionText,
+    required this.sarthakFractionText,
   });
 
   @override
@@ -63,32 +68,47 @@ class DeckResultItem extends DeckItem {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Angle:',
-            style: theme.textTheme.labelSmall,
-          ),
-          Text(
-            angleText,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.bodySmall,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Fraction:',
-            style: theme.textTheme.labelSmall,
-          ),
-          Text(
-            fractionText,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.bodySmall,
-          ),
-        ],
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        alignment: Alignment.centerLeft,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Angle:',
+              style: theme.textTheme.titleSmall,
+            ),
+            Text(
+              angleText,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Fraction:',
+              style: theme.textTheme.titleSmall,
+            ),
+            Text(
+              fractionText,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Sarthak:',
+              style: theme.textTheme.titleSmall,
+            ),
+            Text(
+              sarthakFractionText,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.titleMedium,
+            ),
+          ],
+        ),
       ),
     );
   }
