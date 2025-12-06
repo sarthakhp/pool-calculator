@@ -265,6 +265,7 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                               converter: _converter!,
                               cueBallCenter: _tableState.getBallCenter('cue'),
                               objectBallCenter: _tableState.getBallCenter('object'),
+                              ghostBallCenter: _tableState.getBallCenter('ghost'),
                               pocket: _getSelectedPocketCoordinate(),
                             ),
                           ),

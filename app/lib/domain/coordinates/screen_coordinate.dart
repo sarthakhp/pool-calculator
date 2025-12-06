@@ -20,6 +20,10 @@ class ScreenCoordinate {
     return ScreenCoordinate(x / value, y / value);
   }
 
+  ScreenCoordinate operator *(double value) {
+    return ScreenCoordinate(x * value, y * value);
+  }
+
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;

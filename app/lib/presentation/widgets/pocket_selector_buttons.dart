@@ -71,13 +71,11 @@ class PocketSelectorButtons extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: isSelected
-                  ? Theme.of(context).colorScheme.primary
+                  ? Colors.red
                   : Theme.of(context).colorScheme.surface,
               border: Border.all(
-                color: isSelected
-                    ? Theme.of(context).colorScheme.onPrimary
-                    : Theme.of(context).colorScheme.outline,
-                width: 2,
+                color: isSelected ? Colors.red : Theme.of(context).colorScheme.outline,
+                width: isSelected ? 3 : 2,
               ),
             ),
           ),
