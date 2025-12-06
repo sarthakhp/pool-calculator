@@ -1,12 +1,30 @@
 # Pool Calculator
 
-A standalone Android app built with Flutter/Dart featuring a click counter with persistent local storage.
+A Flutter web/mobile app for calculating pool/billiards shot angles and ball-to-ball contact fractions.
+
+**Live Demo:** https://sarthakhp.github.io/pool-calculator/
+
+## Features
+
+- **Interactive Pool Table** - Drag and position cue ball and object ball on a pool table
+- **Pocket Selection** - Click on any of the 6 pockets to set the target
+- **Angle Calculation** - Real-time calculation of the cut fraction required for the shot
+- **Fraction Display** - Shows the ball-to-ball contact fraction as a percentage
+- **Sarthak Fraction** - Alternative fraction calculation method
+- **Visual Overlap Indicator** - Shows two overlapping balls representing the contact fraction, with the cue ball position changing.
+- **Ghost Ball Visualization** - Displays the ghost ball position for aiming reference
+- **Shot Guide Overlay** - Visual lines showing the shot path from cue ball through object ball to pocket
+- **Adjustable Ball Size** - Slider to adjust ball diameter (1-5 inches)
+- **Adjustable Border Thickness** - Slider to adjust table border thickness
+- **Table Grid Overlay** - 6x3 grid overlay for position reference
+- **Persistent Storage** - Ball positions and settings are saved locally
+- **Responsive Design** - Adapts to different screen sizes
 
 ## Prerequisites
 
-- Flutter SDK (3.0.0 or higher)
+- Flutter SDK (3.32.2 or higher)
 - Android Studio or VS Code with Flutter extensions
-- Android device or emulator
+- Web browser (for web version) or Android device/emulator
 
 ## Setup Instructions
 
@@ -18,39 +36,47 @@ https://docs.flutter.dev/get-started/install
 ### 2. Install Dependencies
 
 ```bash
-cd frontend
+cd app
 flutter pub get
 ```
 
 ### 3. Run the App
 
+**On Web:**
+```bash
+cd app
+flutter run -d chrome
+```
+
 **On Android Emulator/Device:**
 ```bash
-cd frontend
+cd app
 flutter run
+```
+
+**Build for Web:**
+```bash
+cd app
+flutter build web --release
 ```
 
 **Build APK for Android:**
 ```bash
-cd frontend
+cd app
 flutter build apk --release
 ```
 
-The APK will be located at: `frontend/build/app/outputs/flutter-apk/app-release.apk`
-
-### 4. Install APK on Android Device
-
-Transfer the APK to your Android device and install it, or use:
-```bash
-flutter install
-```
 ## Development
 
 **Check for issues:**
 ```bash
-cd frontend
+cd app
 flutter analyze
 ```
+
+## Deployment
+
+The app is automatically deployed to GitHub Pages on push to the `main` branch via GitHub Actions.
 
 ## Troubleshooting
 
@@ -61,7 +87,7 @@ killall -9 dart
 
 **Issue: Dependencies not resolving**
 ```bash
-cd frontend
+cd app
 flutter clean
 flutter pub get
 ```

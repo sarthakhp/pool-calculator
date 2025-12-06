@@ -33,12 +33,27 @@ class SideDeck extends StatelessWidget {
         left: false,
         child: Padding(
           padding: padding,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              for (int i = 0; i < items.length - 1; i++) items[i],
-              if (items.isNotEmpty) Expanded(child: items.last),
-            ],
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      for (int i = 0; i < items.length - 1; i++) items[i],
+                      if (items.isNotEmpty)
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight: constraints.maxHeight * 0.3,
+                          ),
+                          child: items.last,
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ),

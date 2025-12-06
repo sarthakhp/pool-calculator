@@ -154,7 +154,7 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                 final aspectRatio = dimensions.aspectRatio;
                 final borderNormalized = dimensions.borderThicknessNormalized;
 
-                const sideDeckWidth = 500.0;
+                const sideDeckWidth = 300.0;
                 final maxWidth = constraints.maxWidth - sideDeckWidth;
                 final maxHeight = constraints.maxHeight;
 
@@ -167,7 +167,7 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                     ? rawTableWidthByWidth
                     : rawTableWidthByHeight;
 
-                final buttonSize = rawTableWidth / 40;
+                final buttonSize = rawTableWidth / 27;
                 final buttonMargin = buttonSize / 4;
                 final outerMargin = buttonSize + buttonMargin;
 
@@ -302,6 +302,14 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                     SideDeck(
                       width: sideDeckWidth,
                       items: [
+                        DeckOverlapItem(
+                          fraction: sarthakFraction,
+                        ),
+                        DeckResultItem(
+                          angleDegrees: angleDegrees,
+                          fraction: fraction,
+                          sarthakFraction: sarthakFraction,
+                        ),
                         SliderDeckItem(
                           label: 'Ball',
                           value: _tableState.dimensions.ballDiameterInches,
@@ -325,14 +333,6 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                             });
                             _storageHelper.setBorderThicknessInches(value);
                           },
-                        ),
-                        DeckResultItem(
-                          angleDegrees: angleDegrees,
-                          fraction: fraction,
-                          sarthakFraction: sarthakFraction,
-                        ),
-                        DeckOverlapItem(
-                          fraction: sarthakFraction,
                         ),
                       ],
                     ),

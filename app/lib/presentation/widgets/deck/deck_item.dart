@@ -71,8 +71,8 @@ class DeckResultItem extends DeckItem {
     final theme = Theme.of(context);
     final screenSize = MediaQuery.sizeOf(context);
     final shortestSide = screenSize.shortestSide;
-    final labelFontSize = shortestSide * 0.05;
-    final valueFontSize = shortestSide * 0.05;
+    final labelFontSize = shortestSide * 0.04;
+    final valueFontSize = shortestSide * 0.04;
 
     final angleText = angleDegrees != null ? '${angleDegrees!.toStringAsFixed(2)}°' : '-';
     final fractionText = '${(fraction.abs() * 100).toStringAsFixed(2)}%';
@@ -82,8 +82,10 @@ class DeckResultItem extends DeckItem {
       padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          const Divider(),
+          const SizedBox(height: 8),
           Text(
             'Angle:',
             style: theme.textTheme.titleSmall?.copyWith(fontSize: labelFontSize),
@@ -123,6 +125,8 @@ class DeckResultItem extends DeckItem {
               fontWeight: FontWeight.bold,
             ),
           ),
+          const SizedBox(height: 8),
+          const Divider(),
         ],
       ),
     );
@@ -147,7 +151,8 @@ class DeckOverlapItem extends DeckItem {
       child: LayoutBuilder(
         builder: (context, constraints) {
           final availableWidth = constraints.maxWidth;
-          final availableHeight = constraints.maxHeight;
+          final hasFiniteHeight = constraints.maxHeight.isFinite;
+          final availableHeight = hasFiniteHeight ? constraints.maxHeight : availableWidth;
           final ballDiameter = (availableWidth * 0.4).clamp(0.0, availableHeight * 0.8);
           final overlap = ballDiameter * absFraction;
           final totalWidth = (ballDiameter * 2) - overlap;
@@ -158,7 +163,7 @@ class DeckOverlapItem extends DeckItem {
           return Center(
             child: SizedBox(
               width: totalWidth,
-              height: availableHeight,
+              height: ballDiameter,
               child: Stack(
                 alignment: Alignment.center,
                 children: [

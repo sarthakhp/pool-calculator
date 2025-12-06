@@ -24,6 +24,9 @@ jobs:
         with:
           flutter-version: '3.32.2'
           channel: 'stable'
+          cache: true
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
+          cache-path: '${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:'
 
       - name: Get dependencies
         working-directory: ./app
