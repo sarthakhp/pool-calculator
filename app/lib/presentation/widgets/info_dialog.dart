@@ -43,6 +43,11 @@ class InfoDialog extends StatelessWidget {
             icon: Icons.tune,
             text: 'Adjust friction and ball speed to correct for cut-induced throw.',
           ),
+          SizedBox(height: 12),
+          _InfoItem(
+            icon: Icons.screen_rotation,
+            text: 'Always use the app in landscape mode for the best experience.',
+          ),
         ],
       ),
       actions: [
