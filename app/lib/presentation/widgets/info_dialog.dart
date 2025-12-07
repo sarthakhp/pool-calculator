@@ -28,7 +28,13 @@ class _InfoDialogState extends State<InfoDialog> {
     return AlertDialog(
       title: const Row(
         children: [
-          Icon(Icons.info_outline, color: Colors.blueAccent),
+          SizedBox(
+            width: 28,
+            height: 28,
+            child: Center(
+              child: Icon(Icons.info_outline, size: 24, color: Colors.blueAccent),
+            ),
+          ),
           SizedBox(width: 8),
           Text('How to Use'),
         ],
