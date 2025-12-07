@@ -24,7 +24,7 @@ class AngleCalculator {
   static AngleCalculationResult calculate({
     required ScreenCoordinate cueBall,
     required ScreenCoordinate objectBall,
-    required ScreenCoordinate pocket,
+    required ScreenCoordinate target,
     required double ballRadiusPixels,
   }) {
     // Debug: print coordinates before calculation
@@ -36,12 +36,12 @@ class AngleCalculator {
     //     '(${pocket.x.toStringAsFixed(4)}, ${pocket.y.toStringAsFixed(4)})');
 
     final vCO = objectBall - cueBall;
-    final vOP = pocket - objectBall;
+    final vOT = target - objectBall;
 
     final magCO = vCO.magnitude;
-    final magOP = vOP.magnitude;
+    final magOT = vOT.magnitude;
 
-    if (magCO == 0 || magOP == 0) {
+    if (magCO == 0 || magOT == 0) {
       return AngleCalculationResult(
         angleRadians: 0,
         angleDegrees: 0,
@@ -52,15 +52,15 @@ class AngleCalculator {
     }
 
     final vCOUnit = vCO.normalized();
-    final vOPUnit = vOP.normalized();
+    final vOTUnit = vOT.normalized();
 
     // print('AngleCalculator.calculate -> vector vCO: '
     //     '(${vCOUnit.x.toStringAsFixed(4)}, ${vCO.y.toStringAsFixed(4)})');
     //
-    // print('AngleCalculator.calculate -> vector vOP: '
-    //     '(${vOPUnit.x.toStringAsFixed(4)}, ${vOP.y.toStringAsFixed(4)})');
+    // print('AngleCalculator.calculate -> vector vOT: '
+    //     '(${vOTUnit.x.toStringAsFixed(4)}, ${vOT.y.toStringAsFixed(4)})');
 
-    final dot = vCOUnit.dot(vOPUnit);
+    final dot = vCOUnit.dot(vOTUnit);
     var cosTheta = dot;
     if (cosTheta > 1) cosTheta = 1;
     if (cosTheta < -1) cosTheta = -1;
@@ -73,10 +73,10 @@ class AngleCalculator {
     // Ghost ball center: position along the line from pocket through object ball,
     // at a distance of one ball diameter (2 * radius) from the object ball center
     final ballDiameter = ballRadiusPixels * 2;
-    final vPOUnit = ScreenCoordinate(-vOPUnit.x, -vOPUnit.y);
+    final vTOUnit = ScreenCoordinate(-vOTUnit.x, -vOTUnit.y);
     final ghostBallCenter = ScreenCoordinate(
-      objectBall.x + vPOUnit.x * ballDiameter,
-      objectBall.y + vPOUnit.y * ballDiameter,
+      objectBall.x + vTOUnit.x * ballDiameter,
+      objectBall.y + vTOUnit.y * ballDiameter,
     );
 
     final vCG = ghostBallCenter - cueBall;

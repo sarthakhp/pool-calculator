@@ -22,11 +22,14 @@ class DraggableBallWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final topLeft = converter.ballTopLeftScreen(ball.center);
     final diameter = converter.ballDiameterPixels();
+    final touchPadding = diameter * 1;
+    final touchAreaSize = diameter + (touchPadding * 2);
 
     return Positioned(
-      left: topLeft.x,
-      top: topLeft.y,
+      left: topLeft.x - touchPadding,
+      top: topLeft.y - touchPadding,
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onPanUpdate: (details) {
           dragHandler.handleDrag(
             ballId: ball.id,
@@ -39,9 +42,15 @@ class DraggableBallWidget extends StatelessWidget {
           dragHandler.completeDrag(ball.id);
           onDragEnd?.call();
         },
-        child: BallWidget(
-          ball: ball,
-          diameter: diameter,
+        child: SizedBox(
+          width: touchAreaSize,
+          height: touchAreaSize,
+          child: Center(
+            child: BallWidget(
+              ball: ball,
+              diameter: diameter,
+            ),
+          ),
         ),
       ),
     );

@@ -9,16 +9,17 @@ class CalculationEngine {
     required ScreenCoordinate? cue,
     required ScreenCoordinate? object,
     required ScreenCoordinate? pocket,
+    required ScreenCoordinate? target,
     required double ballRadiusPixels,
   }) {
-    if (cue == null || object == null || pocket == null) {
+    if (cue == null || object == null || pocket == null || target == null) {
       return (null, 0.0, 0.0, null);
     }
 
     final result = AngleCalculator.calculate(
       cueBall: cue,
       objectBall: object,
-      pocket: pocket,
+      target: target,
       ballRadiusPixels: ballRadiusPixels,
     );
 

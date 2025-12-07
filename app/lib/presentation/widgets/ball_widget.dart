@@ -26,6 +26,8 @@ class BallWidget extends StatelessWidget {
         return Colors.black;
       case BallType.ghost:
         return Colors.white.withValues(alpha: 0.4);
+      case BallType.target:
+        return Colors.red;
     }
   }
 
@@ -33,7 +35,7 @@ class BallWidget extends StatelessWidget {
     if (ball.type == BallType.ghost) {
       return Colors.white.withValues(alpha: 0.8);
     }
-    return Colors.black;
+    return Colors.transparent;
   }
 
   Color _solidBallColor(int number) {

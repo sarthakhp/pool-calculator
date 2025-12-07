@@ -124,12 +124,14 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
 
     final cue = _tableState.getBallCenter('cue');
     final object = _tableState.getBallCenter('object');
+    final target = _tableState.getBallCenter('target');
     final pocket = _getSelectedPocketCoordinate();
 
     return CalculationEngine.compute(
       cue: cue != null ? converter.tableToScreen(cue) : null,
       object: object != null ? converter.tableToScreen(object) : null,
       pocket: pocket != null ? converter.tableToScreen(pocket) : null,
+      target: target != null ? converter.tableToScreen(target) : null,
       ballRadiusPixels: converter.ballRadiusPixels(),
     );
   }
@@ -189,7 +191,7 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                   return const SizedBox.shrink();
                 }
 
-                final availableWidthForTable = maxWidth - (outerMargin * 2);
+                final availableWidthForTable = maxWidth - (outerMargin * 4);
                 final availableHeightForTable = maxHeight - (outerMargin * 2);
 
                 final tableWidthByWidth =
@@ -279,6 +281,7 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                               cueBallCenter: _tableState.getBallCenter('cue'),
                               objectBallCenter: _tableState.getBallCenter('object'),
                               ghostBallCenter: _tableState.getBallCenter('ghost'),
+                              targetBallCenter: _tableState.getBallCenter('target'),
                               pocket: _getSelectedPocketCoordinate(),
                             ),
                           ),
@@ -327,9 +330,9 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                                   },
                                   child: Container(
                                     width: sideDeckCollapsedWidth,
-                                    color: Theme.of(context).colorScheme.surface,
+                                    color: Colors.blueAccent,
                                     child: const Center(
-                                      child: Icon(Icons.chevron_right),
+                                      child: Icon(Icons.chevron_right, color: Colors.white),
                                     ),
                                   ),
                                 ),
@@ -382,9 +385,9 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                               },
                               child: Container(
                                 width: sideDeckCollapsedWidth,
-                                color: Theme.of(context).colorScheme.surface,
+                                color: Colors.blueAccent,
                                 child: const Center(
-                                  child: Icon(Icons.chevron_left),
+                                  child: Icon(Icons.chevron_left, color: Colors.white),
                                 ),
                               ),
                             ),

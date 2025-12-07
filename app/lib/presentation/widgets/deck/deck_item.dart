@@ -71,62 +71,41 @@ class DeckResultItem extends DeckItem {
     final theme = Theme.of(context);
     final screenSize = MediaQuery.sizeOf(context);
     final shortestSide = screenSize.shortestSide;
-    final labelFontSize = shortestSide * 0.04;
-    final valueFontSize = shortestSide * 0.04;
+    final labelFontSize = shortestSide * 0.025;
+    final valueFontSize = shortestSide * 0.025;
 
     final angleText = angleDegrees != null ? '${angleDegrees!.toStringAsFixed(2)}°' : '-';
     final fractionText = '${(fraction.abs() * 100).toStringAsFixed(2)}%';
     final sarthakFractionText = '${(sarthakFraction.abs() * 100).toStringAsFixed(2)}%';
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-      child: Column(
+    Widget buildLabelValue(String label, String value) {
+      return Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Divider(),
-          const SizedBox(height: 8),
           Text(
-            'Angle:',
+            label,
             style: theme.textTheme.titleSmall?.copyWith(fontSize: labelFontSize),
           ),
+          const SizedBox(height: 4),
           Text(
-            angleText,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
+            value,
             style: theme.textTheme.titleMedium?.copyWith(
               fontSize: valueFontSize,
               fontWeight: FontWeight.bold,
             ),
           ),
-          Text(
-            'Fraction:',
-            style: theme.textTheme.labelLarge?.copyWith(fontSize: labelFontSize),
-          ),
-          Text(
-            fractionText,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontSize: valueFontSize,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            'Sarthak Fraction:',
-            style: theme.textTheme.titleSmall?.copyWith(fontSize: labelFontSize),
-          ),
-          Text(
-            sarthakFractionText,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontSize: valueFontSize,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Divider(),
+        ],
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          buildLabelValue('Angle', angleText),
+          buildLabelValue('Fraction', fractionText),
+          buildLabelValue('S. Fraction', sarthakFractionText),
         ],
       ),
     );

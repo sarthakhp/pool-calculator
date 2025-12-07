@@ -21,6 +21,7 @@ class PoolTableState {
 
   static const TableCoordinate defaultCueBallPosition = TableCoordinate(0.25, 0.5);
   static const TableCoordinate defaultObjectBallPosition = TableCoordinate(0.75, 0.5);
+  static const TableCoordinate defaultTargetBallPosition = TableCoordinate(0.9, 0.9);
 
   void addBall(Ball ball) {
     _balls[ball.id] = ball;
@@ -77,13 +78,19 @@ class PoolTableState {
   }
 
   void initializeDefaultBalls() {
-    addBall(Ball.cue(position: defaultCueBallPosition));
     addBall(Ball(
       id: 'object',
       type: BallType.solid,
       number: 1,
       position: defaultObjectBallPosition,
     ));
+    addBall(Ball(
+      id: 'target',
+      type: BallType.target,
+      number: 1,
+      position: defaultTargetBallPosition,
+    ));
+    addBall(Ball.cue(position: defaultCueBallPosition));
   }
 
   void resetToDefaults() {
