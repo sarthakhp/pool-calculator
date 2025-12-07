@@ -32,6 +32,9 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
     _tableState = PoolTableState();
     _tableState.initializeDefaultBalls();
     _loadBallPositions();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      InfoDialog.show(context);
+    });
   }
 
   Future<void> _loadBallPositions() async {
@@ -140,6 +143,11 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blueAccent),
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline),
+            tooltip: 'How to Use',
+            onPressed: () => InfoDialog.show(context),
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             tooltip: 'Reset',
