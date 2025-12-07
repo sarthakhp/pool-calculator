@@ -61,16 +61,6 @@ class StorageHelper {
     return preferences.getString('selected_position_name');
   }
 
-  Future<void> setSelectedPosition(String positionName) async {
-    final preferences = await prefs;
-    await preferences.setString('selected_position_name', positionName);
-  }
-
-  Future<void> clearSelectedPosition() async {
-    final preferences = await prefs;
-    await preferences.remove('selected_position_name');
-  }
-
   Future<double?> getBallDiameterInches() async {
     final preferences = await prefs;
     return preferences.getDouble('ball_diameter_inches');
@@ -89,6 +79,26 @@ class StorageHelper {
   Future<void> setBorderThicknessInches(double value) async {
     final preferences = await prefs;
     await preferences.setDouble('border_thickness_inches', value);
+  }
+
+  Future<double?> getCueBallSpeed() async {
+    final preferences = await prefs;
+    return preferences.getDouble('cue_ball_speed');
+  }
+
+  Future<void> setCueBallSpeed(double value) async {
+    final preferences = await prefs;
+    await preferences.setDouble('cue_ball_speed', value);
+  }
+
+  Future<double?> getFriction() async {
+    final preferences = await prefs;
+    return preferences.getDouble('friction');
+  }
+
+  Future<void> setFriction(double value) async {
+    final preferences = await prefs;
+    await preferences.setDouble('friction', value);
   }
 }
 

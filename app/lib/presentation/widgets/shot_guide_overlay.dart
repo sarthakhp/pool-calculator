@@ -5,9 +5,8 @@ class ShotGuideOverlay extends StatelessWidget {
   final CoordinateConverter converter;
   final TableCoordinate? cueBallCenter;
   final TableCoordinate? objectBallCenter;
-  final TableCoordinate? ghostBallCenter;
   final TableCoordinate? targetBallCenter;
-  final TableCoordinate? pocket;
+  final TableCoordinate? ghostBallAdjustedCenter;
   final Color cueToObjectColor;
   final Color objectToPocketColor;
   final double strokeWidth;
@@ -17,9 +16,8 @@ class ShotGuideOverlay extends StatelessWidget {
     required this.converter,
     required this.cueBallCenter,
     required this.objectBallCenter,
-    required this.ghostBallCenter,
     required this.targetBallCenter,
-    required this.pocket,
+    required this.ghostBallAdjustedCenter,
     this.cueToObjectColor = Colors.white,
     this.objectToPocketColor = Colors.red,
     this.strokeWidth = 2.0,
@@ -27,7 +25,7 @@ class ShotGuideOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (cueBallCenter == null || objectBallCenter == null || pocket == null) {
+    if (cueBallCenter == null || objectBallCenter == null || targetBallCenter == null) {
       return const SizedBox.shrink();
     }
 
@@ -36,9 +34,8 @@ class ShotGuideOverlay extends StatelessWidget {
         converter: converter,
         cueBallCenter: cueBallCenter!,
         objectBallCenter: objectBallCenter!,
-        ghostBallCenter: ghostBallCenter!,
         targetBallCenter: targetBallCenter!,
-        pocket: pocket!,
+        ghostBallAdjustedCenter: ghostBallAdjustedCenter!,
         cueToObjectColor: cueToObjectColor,
         objectToPocketColor: objectToPocketColor,
         strokeWidth: strokeWidth,
@@ -51,9 +48,8 @@ class _ShotGuidePainter extends CustomPainter {
   final CoordinateConverter converter;
   final TableCoordinate cueBallCenter;
   final TableCoordinate objectBallCenter;
-  final TableCoordinate ghostBallCenter;
   final TableCoordinate targetBallCenter;
-  final TableCoordinate pocket;
+  final TableCoordinate ghostBallAdjustedCenter;
   final Color cueToObjectColor;
   final Color objectToPocketColor;
   final double strokeWidth;
@@ -62,9 +58,8 @@ class _ShotGuidePainter extends CustomPainter {
     required this.converter,
     required this.cueBallCenter,
     required this.objectBallCenter,
-    required this.ghostBallCenter,
     required this.targetBallCenter,
-    required this.pocket,
+    required this.ghostBallAdjustedCenter,
     required this.cueToObjectColor,
     required this.objectToPocketColor,
     required this.strokeWidth,
@@ -74,11 +69,12 @@ class _ShotGuidePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final cueScreen = converter.tableToScreen(cueBallCenter);
     final objectScreen = converter.tableToScreen(objectBallCenter);
-    final ghostScreen = converter.tableToScreen(ghostBallCenter);
     final targetScreen = converter.tableToScreen(targetBallCenter);
-    // final pocketScreen = converter.tableToScreen(pocket);
+    final ghostAdjustedScreen = converter.tableToScreen(ghostBallAdjustedCenter);
 
-    final ghostScreenExtended = ((ghostScreen - cueScreen).normalized() * 1000) + ghostScreen;
+    final targetScreenExtended = ((targetScreen - objectScreen).normalized() * 1000) + targetScreen;
+    final ghostAdjustedScreenExtended = ((ghostAdjustedScreen - cueScreen).normalized() * 1000) + ghostAdjustedScreen;
+    final adjustedPathExtended = ((objectScreen - ghostAdjustedScreen).normalized() * 1000) + objectScreen;
 
     final cueToObjectPaint = Paint()
       ..color = cueToObjectColor
@@ -86,20 +82,31 @@ class _ShotGuidePainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     final objectToTargetPaint = Paint()
-      ..color = objectToPocketColor
+      ..color = Colors.redAccent
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke;
+
+    final ghostAdjustedToObjectPaint = Paint()
+      ..color = Colors.lightGreen
       ..strokeWidth = strokeWidth
       ..style = PaintingStyle.stroke;
 
     canvas.drawLine(
       Offset(cueScreen.x, cueScreen.y),
-      Offset(ghostScreenExtended.x, ghostScreenExtended.y),
+      Offset(ghostAdjustedScreenExtended.x, ghostAdjustedScreenExtended.y),
       cueToObjectPaint,
     );
 
     canvas.drawLine(
       Offset(objectScreen.x, objectScreen.y),
-      Offset(targetScreen.x, targetScreen.y),
+      Offset(targetScreenExtended.x, targetScreenExtended.y),
       objectToTargetPaint,
+    );
+
+    canvas.drawLine(
+      Offset(ghostAdjustedScreen.x, ghostAdjustedScreen.y),
+      Offset(adjustedPathExtended.x, adjustedPathExtended.y),
+      ghostAdjustedToObjectPaint,
     );
   }
 
@@ -108,7 +115,6 @@ class _ShotGuidePainter extends CustomPainter {
     return
         cueBallCenter != oldDelegate.cueBallCenter ||
         objectBallCenter != oldDelegate.objectBallCenter ||
-        pocket != oldDelegate.pocket ||
         converter != oldDelegate.converter ||
         cueToObjectColor != oldDelegate.cueToObjectColor ||
         objectToPocketColor != oldDelegate.objectToPocketColor ||

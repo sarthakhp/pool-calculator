@@ -71,41 +71,53 @@ class DeckResultItem extends DeckItem {
     final theme = Theme.of(context);
     final screenSize = MediaQuery.sizeOf(context);
     final shortestSide = screenSize.shortestSide;
-    final labelFontSize = shortestSide * 0.025;
-    final valueFontSize = shortestSide * 0.025;
+    final labelFontSize = shortestSide * 0.04;
+    final valueFontSize = shortestSide * 0.05;
 
     final angleText = angleDegrees != null ? '${angleDegrees!.toStringAsFixed(2)}°' : '-';
     final fractionText = '${(fraction.abs() * 100).toStringAsFixed(2)}%';
     final sarthakFractionText = '${(sarthakFraction.abs() * 100).toStringAsFixed(2)}%';
 
     Widget buildLabelValue(String label, String value) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            label,
-            style: theme.textTheme.titleSmall?.copyWith(fontSize: labelFontSize),
+      return AspectRatio(
+        aspectRatio: 1.0,
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: theme.colorScheme.outline),
+            borderRadius: BorderRadius.circular(4),
           ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontSize: valueFontSize,
-              fontWeight: FontWeight.bold,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  label,
+                  style: theme.textTheme.titleSmall?.copyWith(fontSize: labelFontSize),
+                ),
+                Text(
+                  value,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontSize: valueFontSize,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
+        ),
       );
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          buildLabelValue('Angle', angleText),
-          buildLabelValue('Fraction', fractionText),
-          buildLabelValue('S. Fraction', sarthakFractionText),
+          Expanded(child: buildLabelValue('Angle', angleText)),
+          const SizedBox(width: 4),
+          Expanded(child: buildLabelValue('Fraction', fractionText)),
+          const SizedBox(width: 4),
+          Expanded(child: buildLabelValue('S.Fraction', sarthakFractionText)),
         ],
       ),
     );
@@ -195,8 +207,6 @@ class DeckOverlapItem extends DeckItem {
                   buildPoint(objectBallCenterX - ballRadius / 2, centerY, Colors.blue, Colors.transparent),
                   buildPoint(objectBallCenterX + ballRadius / 2, centerY, Colors.blue, Colors.transparent),
                   buildPoint(cueBallCenterX, centerY, Colors.red, Colors.red),
-                  // buildPoint(cueBallCenterX - ballRadius / 2, centerY, Colors.blue),
-                  // buildPoint(cueBallCenterX + ballRadius / 2, centerY, Colors.blue),
                 ],
               ),
             ),

@@ -24,7 +24,7 @@ class SliderDeckItem extends DeckItem {
     final theme = Theme.of(context);
     final screenSize = MediaQuery.sizeOf(context);
     final shortestSide = screenSize.shortestSide;
-    final fontSize = shortestSide * 0.04;
+    final fontSize = shortestSide * 0.03;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

@@ -27,13 +27,16 @@ class BallWidget extends StatelessWidget {
       case BallType.ghost:
         return Colors.white.withValues(alpha: 0.4);
       case BallType.target:
-        return Colors.red;
+        return Colors.black;
     }
   }
 
   Color get _borderColor {
     if (ball.type == BallType.ghost) {
       return Colors.white.withValues(alpha: 0.8);
+    }
+    if (ball.type == BallType.target) {
+      return Colors.green;
     }
     return Colors.transparent;
   }
@@ -57,11 +60,12 @@ class BallWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var radius = ball.type == BallType.target ? diameter * 1.7 : diameter;
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: diameter,
-        height: diameter,
+        width: radius,
+        height: radius,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: _ballColor,

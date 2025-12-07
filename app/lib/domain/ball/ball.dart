@@ -64,6 +64,14 @@ class Ball {
     );
   }
 
+  factory Ball.ghostAdjusted({required TableCoordinate position}) {
+    return Ball(
+      id: 'ghost_adjusted',
+      type: BallType.ghost,
+      position: position,
+    );
+  }
+
   TableCoordinate get center => position;
 
   double radiusNormalized(TableDimensions dimensions) {
@@ -89,11 +97,18 @@ class Ball {
   }
 
   void moveTo(TableCoordinate newPosition, TableDimensions dimensions) {
+
+    double xMargin = 0, yMargin = 0;
+    if (type == BallType.target) {
+      xMargin = 0.07;
+      yMargin = xMargin*2;
+    }
+
     position = newPosition.clamp(
-      dimensions.minBallX,
-      dimensions.maxBallX,
-      dimensions.minBallY,
-      dimensions.maxBallY,
+      dimensions.minBallX - xMargin,
+      dimensions.maxBallX + xMargin,
+      dimensions.minBallY - yMargin,
+      dimensions.maxBallY + yMargin,
     );
   }
 

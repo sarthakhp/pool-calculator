@@ -8,4 +8,3 @@ export 'table/pool_table_state.dart';
 export 'table/table_dimensions.dart';
 export 'table/angle_calculator.dart';
 export 'table/calculation_engine.dart';
-export 'table/pocket_positions.dart';

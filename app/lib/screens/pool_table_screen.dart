@@ -18,7 +18,6 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
   final StorageHelper _storageHelper = StorageHelper();
   late final PoolTableState _tableState;
   bool _isLoading = true;
-  String? _selectedPositionName;
   bool _isSideDeckExpanded = true;
 
   double _tableWidthPixels = 0;
@@ -39,9 +38,10 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
     try {
       final cueBallPos = await _ballPositionRepository.getCueBallPosition();
       final objectBallPos = await _ballPositionRepository.getObjectBallPosition();
-      final selectedPositionName = await _storageHelper.getSelectedPosition();
       final savedBallDiameter = await _storageHelper.getBallDiameterInches();
       final savedBorderThickness = await _storageHelper.getBorderThicknessInches();
+      final savedCueBallSpeed = await _storageHelper.getCueBallSpeed();
+      final savedFriction = await _storageHelper.getFriction();
 
       setState(() {
         if (cueBallPos != null) {
@@ -50,16 +50,17 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
         if (objectBallPos != null) {
           _tableState.moveBall('object', TableCoordinate(objectBallPos.x, objectBallPos.y));
         }
-        if (selectedPositionName != null) {
-          _selectedPositionName = selectedPositionName;
-        } else {
-          _selectedPositionName = PocketPositions.topLeftCorner;
-        }
         if (savedBallDiameter != null) {
           _tableState.updateBallDiameter(savedBallDiameter);
         }
         if (savedBorderThickness != null) {
           _tableState.updateBorderThickness(savedBorderThickness);
+        }
+        if (savedCueBallSpeed != null) {
+          _tableState.updateCueBallSpeed(savedCueBallSpeed);
+        }
+        if (savedFriction != null) {
+          _tableState.updateFriction(savedFriction);
         }
         _isLoading = false;
       });
@@ -98,10 +99,8 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
   Future<void> _resetBallPositions() async {
     try {
       await _ballPositionRepository.resetBallPositions();
-      await _storageHelper.clearSelectedPosition();
       setState(() {
         _tableState.resetToDefaults();
-        _selectedPositionName = PocketPositions.topLeftCorner;
       });
     } catch (e) {
       if (mounted) {
@@ -112,27 +111,23 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
     }
   }
 
-  TableCoordinate? _getSelectedPocketCoordinate() {
-    return PocketPositions.getTableCoordinate(_selectedPositionName);
-  }
-
-  (double? angleDegrees, double fraction, double sarthakFraction, ScreenCoordinate? ghostBallCenter) _compute() {
+  (double? angleDegrees, double fraction, double sarthakFraction, ScreenCoordinate? ghostBallCenter, ScreenCoordinate? ghostBallAdjustedCenter) _compute() {
     final converter = _converter;
     if (converter == null) {
-      return (null, 0.0, 0.0, null);
+      return (null, 0.0, 0.0, null, null);
     }
 
     final cue = _tableState.getBallCenter('cue');
     final object = _tableState.getBallCenter('object');
     final target = _tableState.getBallCenter('target');
-    final pocket = _getSelectedPocketCoordinate();
 
     return CalculationEngine.compute(
       cue: cue != null ? converter.tableToScreen(cue) : null,
       object: object != null ? converter.tableToScreen(object) : null,
-      pocket: pocket != null ? converter.tableToScreen(pocket) : null,
       target: target != null ? converter.tableToScreen(target) : null,
       ballRadiusPixels: converter.ballRadiusPixels(),
+      cueBallSpeed: _tableState.cueBallSpeed,
+      friction: _tableState.friction,
     );
   }
 
@@ -167,8 +162,8 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                 final aspectRatio = dimensions.aspectRatio;
                 final borderNormalized = dimensions.borderThicknessNormalized;
 
-                const sideDeckExpandedWidth = 300.0;
-                const sideDeckCollapsedWidth = 40.0;
+                final sideDeckExpandedWidth = constraints.maxWidth * 0.4;
+                final sideDeckCollapsedWidth = sideDeckExpandedWidth * 0.13;
                 final sideDeckWidth = _isSideDeckExpanded ? sideDeckExpandedWidth : sideDeckCollapsedWidth;
                 final maxWidth = constraints.maxWidth - sideDeckWidth;
                 final maxHeight = constraints.maxHeight;
@@ -182,9 +177,7 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                     ? rawTableWidthByWidth
                     : rawTableWidthByHeight;
 
-                final buttonSize = rawTableWidth / 27;
-                final buttonMargin = buttonSize / 4;
-                final outerMargin = buttonSize + buttonMargin;
+                final outerMargin = rawTableWidth / 25;
 
                 if (constraints.maxWidth <= outerMargin * 2 ||
                     constraints.maxHeight <= outerMargin * 2) {
@@ -235,11 +228,16 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                   converter: _converter!,
                 );
 
-                final (angleDegrees, fraction, sarthakFraction, ghostBallCenter) = _compute();
-                if (ghostBallCenter != null) {
-                  _tableState.updateGhostBall(_converter!.screenToTable(ghostBallCenter));
+                final (angleDegrees, fraction, sarthakFraction, ghostBallCenter, ghostBallAdjustedCenter) = _compute();
+                // if (ghostBallCenter != null) {
+                //   _tableState.updateGhostBall(_converter!.screenToTable(ghostBallCenter));
+                // } else {
+                //   _tableState.updateGhostBall(null);
+                // }
+                if (ghostBallAdjustedCenter != null) {
+                  _tableState.updateGhostBallAdjusted(_converter!.screenToTable(ghostBallAdjustedCenter));
                 } else {
-                  _tableState.updateGhostBall(null);
+                  _tableState.updateGhostBallAdjusted(null);
                 }
 
                 return Row(
@@ -280,9 +278,8 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                               converter: _converter!,
                               cueBallCenter: _tableState.getBallCenter('cue'),
                               objectBallCenter: _tableState.getBallCenter('object'),
-                              ghostBallCenter: _tableState.getBallCenter('ghost'),
+                              ghostBallAdjustedCenter: _tableState.getBallCenter('ghost_adjusted'),
                               targetBallCenter: _tableState.getBallCenter('target'),
-                              pocket: _getSelectedPocketCoordinate(),
                             ),
                           ),
                           ..._tableState.allBalls.where((ball) => ball.type != BallType.ghost).map((ball) => DraggableBallWidget(
@@ -302,17 +299,15 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                                 diameter: _converter!.ballDiameterPixels(),
                               ),
                             ),
-                          PocketSelectorButtons(
-                            converter: _converter!,
-                            storageHelper: _storageHelper,
-                            selectedPositionName: _selectedPositionName,
-                            buttonSize: buttonSize,
-                            onSelectionChanged: (name) {
-                              setState(() {
-                                _selectedPositionName = name;
-                              });
-                            },
-                          ),
+                          if (_tableState.ghostBallAdjusted != null)
+                            Positioned(
+                              left: _converter!.ballTopLeftScreen(_tableState.ghostBallAdjusted!.center).x,
+                              top: _converter!.ballTopLeftScreen(_tableState.ghostBallAdjusted!.center).y,
+                              child: BallWidget(
+                                ball: _tableState.ghostBallAdjusted!,
+                                diameter: _converter!.ballDiameterPixels(),
+                              ),
+                            ),
                         ],
                       ),
                     ),
@@ -349,7 +344,7 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                                         sarthakFraction: sarthakFraction,
                                       ),
                                       SliderDeckItem(
-                                        label: 'Ball',
+                                        label: 'Ball Size',
                                         value: _tableState.dimensions.ballDiameterInches,
                                         min: 1.0,
                                         max: 5.0,
@@ -361,16 +356,30 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                                         },
                                       ),
                                       SliderDeckItem(
-                                        label: 'Border',
-                                        value: _tableState.dimensions.borderThicknessInches,
-                                        min: 0.5,
-                                        max: 6.0,
+                                        label: 'Cue Ball Speed',
+                                        value: _tableState.cueBallSpeed,
+                                        min: 0,
+                                        max: 2,
                                         onChanged: (value) {
                                           setState(() {
-                                            _tableState.updateBorderThickness(value);
+                                            _tableState.updateCueBallSpeed(value);
                                           });
-                                          _storageHelper.setBorderThicknessInches(value);
+                                          _storageHelper.setCueBallSpeed(value);
                                         },
+                                        unit: '',
+                                      ),
+                                      SliderDeckItem(
+                                        label: 'Friction',
+                                        value: _tableState.friction,
+                                        min: 0,
+                                        max: 0.3,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _tableState.updateFriction(value);
+                                          });
+                                          _storageHelper.setFriction(value);
+                                        },
+                                        unit: '',
                                       ),
                                     ],
                                   ),

@@ -5,11 +5,21 @@ import 'package:pool_calculator/domain/table/table_dimensions.dart';
 
 class PoolTableState {
   TableDimensions dimensions;
+  double cueBallSpeed = 0.0;
+  double friction = 0.0;
   final Map<String, Ball> _balls = {};
 
   PoolTableState({
     this.dimensions = TableDimensions.standard,
   });
+
+  void updateCueBallSpeed(double speed) {
+    cueBallSpeed = speed;
+  }
+
+  void updateFriction(double friction) {
+    this.friction = friction;
+  }
 
   void updateBallDiameter(double diameterInches) {
     dimensions = dimensions.copyWith(ballDiameterInches: diameterInches);
@@ -106,5 +116,14 @@ class PoolTableState {
     }
   }
 
+  void updateGhostBallAdjusted(TableCoordinate? position) {
+    if (position == null) {
+      _balls.remove('ghost_adjusted');
+    } else {
+      _balls['ghost_adjusted'] = Ball.ghostAdjusted(position: position);
+    }
+  }
+
   Ball? get ghostBall => _balls['ghost'];
+  Ball? get ghostBallAdjusted => _balls['ghost_adjusted'];
 }

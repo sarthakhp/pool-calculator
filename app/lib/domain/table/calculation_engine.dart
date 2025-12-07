@@ -5,15 +5,17 @@ import '../coordinates/screen_coordinate.dart';
 class CalculationEngine {
   const CalculationEngine._();
 
-  static (double? angleDegrees, double fraction, double sarthakFraction, ScreenCoordinate? ghostBallCenter) compute({
+  static (double? angleDegrees, double fraction, double sarthakFraction, ScreenCoordinate? ghostBallCenter, ScreenCoordinate? ghostBallAdjustedCenter) compute({
     required ScreenCoordinate? cue,
     required ScreenCoordinate? object,
-    required ScreenCoordinate? pocket,
     required ScreenCoordinate? target,
     required double ballRadiusPixels,
+    required double cueBallSpeed,
+    required double friction,
   }) {
-    if (cue == null || object == null || pocket == null || target == null) {
-      return (null, 0.0, 0.0, null);
+
+    if (cue == null || object == null || target == null) {
+      return (null, 0.0, 0.0, null, null);
     }
 
     final result = AngleCalculator.calculate(
@@ -21,6 +23,8 @@ class CalculationEngine {
       objectBall: object,
       target: target,
       ballRadiusPixels: ballRadiusPixels,
+      friction: friction,
+      cueBallSpeed: cueBallSpeed
     );
 
     final fraction = result.hitFraction.clamp(0.0, 1.0);
@@ -31,6 +35,7 @@ class CalculationEngine {
       fraction,
       sarthakFraction,
       result.ghostBallCenter,
+      result.ghostBallAdjustedCenter
     );
   }
 }
