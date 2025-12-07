@@ -60,7 +60,7 @@ class BallWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var radius = ball.type == BallType.target ? diameter * 1.7 : diameter;
+    var radius = ball.type == BallType.target ? diameter * 1.9 : diameter;
     return GestureDetector(
       onTap: onTap,
       child: Container(
