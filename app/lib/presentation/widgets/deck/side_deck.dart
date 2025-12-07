@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'deck_item.dart';
 
-class SideDeck extends StatelessWidget {
+class SideDeck extends StatefulWidget {
   final List<DeckItem> items;
   final double width;
   final EdgeInsets padding;
@@ -14,11 +14,24 @@ class SideDeck extends StatelessWidget {
   });
 
   @override
+  State<SideDeck> createState() => _SideDeckState();
+}
+
+class _SideDeckState extends State<SideDeck> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return Container(
-      width: width,
+      width: widget.width,
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         boxShadow: [
@@ -32,24 +45,29 @@ class SideDeck extends StatelessWidget {
       child: SafeArea(
         left: false,
         child: Padding(
-          padding: padding,
+          padding: widget.padding,
           child: LayoutBuilder(
             builder: (context, constraints) {
-              return SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      for (int i = 0; i < items.length - 1; i++) items[i],
-                      if (items.isNotEmpty)
-                        ConstrainedBox(
-                          constraints: BoxConstraints(
-                            minHeight: constraints.maxHeight * 0.3,
+              return Scrollbar(
+                controller: _scrollController,
+                thumbVisibility: true,
+                child: SingleChildScrollView(
+                  controller: _scrollController,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        for (int i = 0; i < widget.items.length - 1; i++) widget.items[i],
+                        if (widget.items.isNotEmpty)
+                          ConstrainedBox(
+                            constraints: BoxConstraints(
+                              minHeight: constraints.maxHeight * 0.3,
+                            ),
+                            child: widget.items.last,
                           ),
-                          child: items.last,
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               );

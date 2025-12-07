@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class InfoDialog extends StatelessWidget {
+class InfoDialog extends StatefulWidget {
   const InfoDialog({super.key});
 
   static void show(BuildContext context) {
@@ -8,6 +8,19 @@ class InfoDialog extends StatelessWidget {
       context: context,
       builder: (context) => const InfoDialog(),
     );
+  }
+
+  @override
+  State<InfoDialog> createState() => _InfoDialogState();
+}
+
+class _InfoDialogState extends State<InfoDialog> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -20,10 +33,15 @@ class InfoDialog extends StatelessWidget {
           Text('How to Use'),
         ],
       ),
-      content: const Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+      content: Scrollbar(
+        controller: _scrollController,
+        thumbVisibility: true,
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          child: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
           _InfoItem(
             icon: Icons.touch_app,
             text: 'Drag the balls / target to move them around the table.',
@@ -48,7 +66,9 @@ class InfoDialog extends StatelessWidget {
             icon: Icons.screen_rotation,
             text: 'Always use the app in landscape mode for the best experience.',
           ),
-        ],
+          ],
+          ),
+        ),
       ),
       actions: [
         TextButton(
@@ -74,7 +94,13 @@ class _InfoItem extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 20, color: Colors.blueAccent),
+        SizedBox(
+          width: 24,
+          height: 24,
+          child: Center(
+            child: Icon(icon, size: 20, color: Colors.blueAccent),
+          ),
+        ),
         const SizedBox(width: 12),
         Expanded(
           child: Text(
