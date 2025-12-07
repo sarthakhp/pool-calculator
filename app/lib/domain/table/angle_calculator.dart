@@ -27,13 +27,6 @@ class AngleCalculator {
     required ScreenCoordinate target,
     required double ballRadiusPixels,
   }) {
-    // Debug: print coordinates before calculation
-    // print('AngleCalculator.calculate -> cueBall: '
-    //     '(${cueBall.x.toStringAsFixed(4)}, ${cueBall.y.toStringAsFixed(4)})');
-    // print('AngleCalculator.calculate -> objectBall: '
-    //     '(${objectBall.x.toStringAsFixed(4)}, ${objectBall.y.toStringAsFixed(4)})');
-    // print('AngleCalculator.calculate -> pocket: '
-    //     '(${pocket.x.toStringAsFixed(4)}, ${pocket.y.toStringAsFixed(4)})');
 
     final vCO = objectBall - cueBall;
     final vOT = target - objectBall;
@@ -53,12 +46,6 @@ class AngleCalculator {
 
     final vCOUnit = vCO.normalized();
     final vOTUnit = vOT.normalized();
-
-    // print('AngleCalculator.calculate -> vector vCO: '
-    //     '(${vCOUnit.x.toStringAsFixed(4)}, ${vCO.y.toStringAsFixed(4)})');
-    //
-    // print('AngleCalculator.calculate -> vector vOT: '
-    //     '(${vOTUnit.x.toStringAsFixed(4)}, ${vOT.y.toStringAsFixed(4)})');
 
     final dot = vCOUnit.dot(vOTUnit);
     var cosTheta = dot;
