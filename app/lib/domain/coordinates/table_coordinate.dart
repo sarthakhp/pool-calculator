@@ -16,20 +16,6 @@ class TableCoordinate {
     return TableCoordinate(x - other.x, y - other.y);
   }
 
-  TableCoordinate operator *(double scalar) {
-    return TableCoordinate(x * scalar, y * scalar);
-  }
-
-  TableCoordinate operator /(double scalar) {
-    return TableCoordinate(x / scalar, y / scalar);
-  }
-
-  double distanceTo(TableCoordinate other) {
-    final dx = x - other.x;
-    final dy = y - other.y;
-    return sqrt(dx * dx + dy * dy);
-  }
-
   TableCoordinate clamp(double minX, double maxX, double minY, double maxY) {
     return TableCoordinate(
       x.clamp(minX, maxX),

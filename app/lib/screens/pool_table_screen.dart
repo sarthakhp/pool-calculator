@@ -170,7 +170,7 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                 final aspectRatio = dimensions.aspectRatio;
                 final borderNormalized = dimensions.borderThicknessNormalized;
 
-                final sideDeckExpandedWidth = constraints.maxWidth * 0.4;
+                final sideDeckExpandedWidth = constraints.maxWidth * 0.3;
                 final sideDeckCollapsedWidth = sideDeckExpandedWidth * 0.13;
                 final sideDeckWidth = _isSideDeckExpanded ? sideDeckExpandedWidth : sideDeckCollapsedWidth;
                 final maxWidth = constraints.maxWidth - sideDeckWidth;
@@ -275,8 +275,8 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                                 TableGridOverlay(
                                   width: _converter!.tableWidthPixels,
                                   height: _converter!.tableHeightPixels,
-                                  columns: 6,
-                                  rows: 3,
+                                  columns: 8,
+                                  rows: 4,
                                 ),
                               ],
                             ),
@@ -388,6 +388,26 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
                                           _storageHelper.setFriction(value);
                                         },
                                         unit: '',
+                                      ),
+                                      CoordinateInputDeckItem(
+                                        label: 'Cue Ball Position',
+                                        coordinate: _tableState.getBall('cue')?.position ?? const TableCoordinate(0, 0),
+                                        onChanged: (coord) {
+                                          setState(() {
+                                            _tableState.moveBall('cue', coord);
+                                          });
+                                          _saveBallPosition('cue');
+                                        },
+                                      ),
+                                      CoordinateInputDeckItem(
+                                        label: 'Object Ball Position',
+                                        coordinate: _tableState.getBall('object')?.position ?? const TableCoordinate(0, 0),
+                                        onChanged: (coord) {
+                                          setState(() {
+                                            _tableState.moveBall('object', coord);
+                                          });
+                                          _saveBallPosition('object');
+                                        },
                                       ),
                                     ],
                                   ),

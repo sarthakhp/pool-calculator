@@ -26,9 +26,7 @@ class SliderDeckItem extends DeckItem {
     final shortestSide = screenSize.shortestSide;
     final fontSize = shortestSide * 0.03;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      child: Column(
+    return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
@@ -38,8 +36,8 @@ class SliderDeckItem extends DeckItem {
           Flexible(
             child: SliderTheme(
               data: SliderTheme.of(context).copyWith(
-                trackHeight: 4,
-                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+                trackHeight: 2,
+                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 14),
               ),
               child: Slider(
                 value: value.clamp(min, max),
@@ -50,8 +48,7 @@ class SliderDeckItem extends DeckItem {
             ),
           ),
         ],
-      ),
-    );
+      );
   }
 }
 

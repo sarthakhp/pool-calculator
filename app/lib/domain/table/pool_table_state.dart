@@ -65,28 +65,6 @@ class PoolTableState {
   double get ballDiameterNormalized => dimensions.ballDiameterNormalized;
   double get ballRadiusNormalizedY => dimensions.ballRadiusNormalizedY;
 
-  List<(Ball, Ball)> findCollisions() {
-    final collisions = <(Ball, Ball)>[];
-    final ballList = allBalls;
-
-    for (var i = 0; i < ballList.length; i++) {
-      for (var j = i + 1; j < ballList.length; j++) {
-        if (ballList[i].isCollidingWith(ballList[j], dimensions)) {
-          collisions.add((ballList[i], ballList[j]));
-        }
-      }
-    }
-
-    return collisions;
-  }
-
-  double distanceBetweenBalls(String ballId1, String ballId2) {
-    final ball1 = _balls[ballId1];
-    final ball2 = _balls[ballId2];
-    if (ball1 == null || ball2 == null) return double.infinity;
-    return ball1.position.distanceTo(ball2.position);
-  }
-
   void initializeDefaultBalls() {
     addBall(Ball(
       id: 'object',

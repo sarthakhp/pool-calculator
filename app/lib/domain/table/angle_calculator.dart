@@ -23,6 +23,8 @@ class AngleCalculationResult {
 class AngleCalculator {
   const AngleCalculator._();
 
+  static const double k = 0.5;
+
   static AngleCalculationResult calculate({
     required ScreenCoordinate cueBall,
     required ScreenCoordinate objectBall,
@@ -62,7 +64,6 @@ class AngleCalculator {
     final ballDiameter = ballRadiusPixels * 2;
     final vTOUnit = ScreenCoordinate(-vOTUnit.x, -vOTUnit.y);
 
-    const double k = 0.2;
     final double throwAngle = atan(friction * sin(angleRadians)) / (1 + k * cueBallSpeed);
 
     final cross = vCO.x * vOT.y - vCO.y * vOT.x;

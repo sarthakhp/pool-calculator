@@ -71,8 +71,8 @@ class DeckResultItem extends DeckItem {
     final theme = Theme.of(context);
     final screenSize = MediaQuery.sizeOf(context);
     final shortestSide = screenSize.shortestSide;
-    final labelFontSize = shortestSide * 0.04;
-    final valueFontSize = shortestSide * 0.05;
+    final labelFontSize = shortestSide * 0.03;
+    final valueFontSize = shortestSide * 0.04;
 
     final angleText = angleDegrees != null ? '${angleDegrees!.toStringAsFixed(2)}°' : '-';
     final fractionText = '${(fraction.abs() * 100).toStringAsFixed(2)}%';
@@ -117,7 +117,7 @@ class DeckResultItem extends DeckItem {
           const SizedBox(width: 4),
           Expanded(child: buildLabelValue('Fraction', fractionText)),
           const SizedBox(width: 4),
-          Expanded(child: buildLabelValue('S.Fraction', sarthakFractionText)),
+          Expanded(child: buildLabelValue('S. Fraction', sarthakFractionText)),
         ],
       ),
     );

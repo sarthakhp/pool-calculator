@@ -90,12 +90,6 @@ class Ball {
     return dimensions.ballDiameterInches;
   }
 
-  bool isCollidingWith(Ball other, TableDimensions dimensions) {
-    final distance = position.distanceTo(other.position);
-    final combinedRadii = radiusNormalized(dimensions) + other.radiusNormalized(dimensions);
-    return distance < combinedRadii;
-  }
-
   void moveTo(TableCoordinate newPosition, TableDimensions dimensions) {
 
     double xMargin = 0, yMargin = 0;
