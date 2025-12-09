@@ -48,17 +48,30 @@ class StorageHelper {
     await preferences.setDouble('object_ball_y', y);
   }
 
+  Future<double?> getTargetBallX() async {
+    final preferences = await prefs;
+    return preferences.getDouble('target_ball_x');
+  }
+
+  Future<double?> getTargetBallY() async {
+    final preferences = await prefs;
+    return preferences.getDouble('target_ball_y');
+  }
+
+  Future<void> setTargetBallPosition(double x, double y) async {
+    final preferences = await prefs;
+    await preferences.setDouble('target_ball_x', x);
+    await preferences.setDouble('target_ball_y', y);
+  }
+
   Future<void> resetBallPositions() async {
     final preferences = await prefs;
     await preferences.remove('cue_ball_x');
     await preferences.remove('cue_ball_y');
     await preferences.remove('object_ball_x');
     await preferences.remove('object_ball_y');
-  }
-
-  Future<String?> getSelectedPosition() async {
-    final preferences = await prefs;
-    return preferences.getString('selected_position_name');
+    await preferences.remove('target_ball_x');
+    await preferences.remove('target_ball_y');
   }
 
   Future<double?> getBallDiameterInches() async {

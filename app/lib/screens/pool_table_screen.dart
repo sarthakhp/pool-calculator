@@ -4,6 +4,7 @@ import 'package:pool_calculator/backend/repositories/ball_position_repository.da
 import 'package:pool_calculator/backend/database/storage_helper.dart';
 import 'package:pool_calculator/domain/domain.dart';
 import 'package:pool_calculator/presentation/widgets/widgets.dart';
+import 'package:pool_calculator/screens/image_marker_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PoolTableScreen extends StatefulWidget {
@@ -41,6 +42,7 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
     try {
       final cueBallPos = await _ballPositionRepository.getCueBallPosition();
       final objectBallPos = await _ballPositionRepository.getObjectBallPosition();
+      final targetBallPos = await _ballPositionRepository.getTargetBallPosition();
       final savedBallDiameter = await _storageHelper.getBallDiameterInches();
       final savedBorderThickness = await _storageHelper.getBorderThicknessInches();
       final savedCueBallSpeed = await _storageHelper.getCueBallSpeed();
@@ -52,6 +54,9 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
         }
         if (objectBallPos != null) {
           _tableState.moveBall('object', TableCoordinate(objectBallPos.x, objectBallPos.y));
+        }
+        if (targetBallPos != null) {
+          _tableState.moveBall('target', TableCoordinate(targetBallPos.x, targetBallPos.y));
         }
         if (savedBallDiameter != null) {
           _tableState.updateBallDiameter(savedBallDiameter);
@@ -89,6 +94,8 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
         await _ballPositionRepository.setCueBallPosition(position);
       } else if (ballId == 'object') {
         await _ballPositionRepository.setObjectBallPosition(position);
+      } else if (ballId == 'target') {
+        await _ballPositionRepository.setTargetBallPosition(position);
       }
     } catch (e) {
       if (mounted) {
@@ -143,6 +150,19 @@ class _PoolTableScreenState extends State<PoolTableScreen> {
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blueAccent),
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.camera_alt),
+            tooltip: 'Image Marker',
+            onPressed: () async {
+              final result = await Navigator.push<bool>(
+                context,
+                MaterialPageRoute(builder: (context) => const ImageMarkerScreen()),
+              );
+              if (result == true) {
+                _loadBallPositions();
+              }
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.info_outline),
             tooltip: 'How to Use',

@@ -34,6 +34,21 @@ class BallPositionRepository {
     await _storageHelper.setObjectBallPosition(position.x, position.y);
   }
 
+  Future<BallPosition?> getTargetBallPosition() async {
+    final x = await _storageHelper.getTargetBallX();
+    final y = await _storageHelper.getTargetBallY();
+
+    if (x == null || y == null) {
+      return null;
+    }
+
+    return BallPosition(x: x, y: y);
+  }
+
+  Future<void> setTargetBallPosition(BallPosition position) async {
+    await _storageHelper.setTargetBallPosition(position.x, position.y);
+  }
+
   Future<void> resetBallPositions() async {
     await _storageHelper.resetBallPositions();
   }
